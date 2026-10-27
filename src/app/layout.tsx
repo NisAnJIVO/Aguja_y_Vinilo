@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { fontDisplay, fontSans } from "@/lib/fonts";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
@@ -8,9 +8,9 @@ import { AudioPlayerBar } from "@/components/layout/AudioPlayerBar";
 import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
 
 export const metadata: Metadata = {
-  title: "Aguja y Vinilo — Tienda Online de Vinilos, Tocadiscos & Muebles | Bolivia (Bs)",
+  title: "Aguja y Vinilo - Tienda Online de Vinilos, Tocadiscos & Muebles | Bolivia (Bs)",
   description:
-    "Tienda 100% online especializada para coleccionistas y amantes de la música física en Bolivia. Vinilos de 180g, tocadiscos audiófilos calibrados a mano, fundas y suscripción mensual sorpresa. WhatsApp: 68610314 • jivo3534@gmail.com.",
+    "Tienda 100% online especializada para coleccionistas y amantes de la música física en Bolivia. Vinilos de 180g, tocadiscos audiófilos calibrados a mano, fundas y suscripción mensual sorpresa. WhatsApp: 68610314 - jivo3534@gmail.com.",
   keywords: [
     "vinilos bolivia",
     "tienda de vinilos bolivia online",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Aguja y Vinilo" }],
   openGraph: {
-    title: "Aguja y Vinilo — Tienda Online de Vinilos en Bolivia",
+    title: "Aguja y Vinilo - Tienda Online de Vinilos en Bolivia",
     description: "Vinilos de colección, tocadiscos audiófilos y mobiliario artesanal con envíos asegurados a toda Bolivia. Contacto: 68610314.",
     locale: "es_BO",
     type: "website",
@@ -36,8 +36,15 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${fontDisplay.variable} ${fontSans.variable} h-full antialiased dark`}
+      className={`${fontDisplay.variable} ${fontSans.variable} h-full antialiased light`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "try { var s = localStorage.getItem('av-theme'); if (s === 'dark') { document.documentElement.classList.add('dark'); document.documentElement.classList.remove('light'); } else { document.documentElement.classList.add('light'); document.documentElement.classList.remove('dark'); } } catch (e) {}",
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] bg-grain">
         <SmoothScrollProvider>
           <Navbar />

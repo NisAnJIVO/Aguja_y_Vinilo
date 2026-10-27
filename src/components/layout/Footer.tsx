@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import Link from "next/link";
 import { Disc, Phone, Mail, ShieldCheck, Heart, Truck, MessageCircle } from "lucide-react";
 
@@ -25,6 +25,47 @@ export const Footer: React.FC = () => {
             <div className="pt-2 flex items-center gap-2 text-xs font-mono text-[#C89D56] dark:text-[#C89D56] light:text-[#9E6F22]">
               <ShieldCheck className="w-4 h-4" />
               <span>Garantía de prensado plano y embalaje rígido multicapa</span>
+            </div>
+
+            {/* REDES SOCIALES */}
+            <div className="pt-2 flex items-center gap-3">
+              <span className="text-xs font-mono text-theme-muted uppercase tracking-wider">Redes:</span>
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Instagram @agujayvinilo"
+                className="w-8 h-8 rounded-full bg-black/10 dark:bg-white/10 hover:bg-[#E1306C]/20 border border-black/10 dark:border-white/10 hover:border-[#E1306C] flex items-center justify-center text-theme-primary hover:text-[#E1306C] transition-all hover:scale-110"
+              >
+                <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+              </a>
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Facebook Aguja y Vinilo"
+                className="w-8 h-8 rounded-full bg-black/10 dark:bg-white/10 hover:bg-[#1877F2]/20 border border-black/10 dark:border-white/10 hover:border-[#1877F2] flex items-center justify-center text-theme-primary hover:text-[#1877F2] transition-all hover:scale-110"
+              >
+                <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              </a>
+              <a
+                href="https://tiktok.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="TikTok @agujayvinilo"
+                className="w-8 h-8 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/30 border border-black/10 dark:border-white/10 hover:border-[#C89D56] flex items-center justify-center text-theme-primary hover:text-[#C89D56] transition-all hover:scale-110"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.04-.1z"/></svg>
+              </a>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="YouTube Aguja y Vinilo"
+                className="w-8 h-8 rounded-full bg-black/10 dark:bg-white/10 hover:bg-[#FF0000]/20 border border-black/10 dark:border-white/10 hover:border-[#FF0000] flex items-center justify-center text-theme-primary hover:text-[#FF0000] transition-all hover:scale-110"
+              >
+                <svg className="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
+              </a>
             </div>
           </div>
 
@@ -127,7 +168,7 @@ export const Footer: React.FC = () => {
 
         {/* BOTTOM STRIP */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-theme-muted gap-4">
-          <p>© 2026 Aguja y Vinilo — Tienda online de música analógica en Bolivia. Moneda oficial: Bolivianos (Bs).</p>
+          <p>© 2026 Aguja y Vinilo - Tienda online de música analógica en Bolivia. Moneda oficial: Bolivianos (Bs).</p>
           <div className="flex items-center gap-1">
             <span>Envíos asegurados con amor por el acetato</span>
             <Heart className="w-3.5 h-3.5 text-[#C05436] fill-current mx-1 inline" />

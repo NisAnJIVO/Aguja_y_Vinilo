@@ -10,10 +10,10 @@ function subscribe(callback: () => void) {
 }
 
 function getClientThemeSnapshot(): string {
-  if (typeof window === "undefined") return "dark";
+  if (typeof window === "undefined") return "light";
   const stored = localStorage.getItem("av-theme");
   if (stored) return stored;
-  return document.documentElement.classList.contains("light") ? "light" : "dark";
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
 function getServerThemeSnapshot(): string {
