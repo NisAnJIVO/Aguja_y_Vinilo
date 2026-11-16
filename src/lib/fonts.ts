@@ -1,14 +1,8 @@
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+// Offline-safe font definitions for technical brutalist layout
+export const fontSans = {
+  variable: "font-sans-fallback",
+};
 
-export const fontDisplay = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "swap",
-  axes: ["opsz", "SOFT", "WONK"],
-});
-
-export const fontSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
+export const fontMono = {
+  variable: "font-mono-fallback",
+};
