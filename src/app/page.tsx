@@ -82,6 +82,8 @@ export default function HomePage() {
           loop
           muted
           playsInline
+          poster="/img/hero-poster.webp"
+          preload="auto"
           className="w-full h-full object-cover block"
         >
           <source src="/img/videoplayback.mp4" type="video/mp4" />
