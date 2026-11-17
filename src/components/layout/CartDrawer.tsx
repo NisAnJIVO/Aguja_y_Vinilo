@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
-import { X, Trash2, Plus, Minus, ArrowRight, Disc, Truck } from "lucide-react";
+import { X, Trash2, Plus, Minus, ArrowRight, Disc, Truck, ShoppingCart } from "lucide-react";
 
 export const CartDrawer: React.FC = () => {
   const { items, isOpen, closeCart, updateQuantity, removeItem, getSubtotal } = useCartStore();
@@ -30,14 +30,14 @@ export const CartDrawer: React.FC = () => {
         >
           {/* HEADER */}
           <div className="p-6 border-b border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Disc className="w-5 h-5 text-[#C89D56]" />
-              <h2 className="font-display font-semibold text-lg">Tu Colección Seleccionada</h2>
+            <div className="flex items-center gap-2.5">
+              <ShoppingCart className="w-5 h-5 text-white" />
+              <h2 className="font-display font-semibold text-lg text-white">Carrito de Compras</h2>
             </div>
             <button
               onClick={closeCart}
               aria-label="Cerrar carrito"
-              className="p-1.5 rounded-full text-[#8B826B] hover:text-[#F6F3EC] hover:bg-white/5 transition-colors"
+              className="p-1.5 rounded-full text-neutral-400 hover:text-white hover:bg-white/10 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -69,14 +69,14 @@ export const CartDrawer: React.FC = () => {
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {items.length === 0 ? (
               <div className="text-center py-16 space-y-4">
-                <Disc className="w-12 h-12 text-[#2B2A25] mx-auto animate-spin-slow" />
-                <p className="text-[#8B826B] text-sm">Tu bandeja de discos está vacía.</p>
+                <ShoppingCart className="w-12 h-12 text-neutral-600 mx-auto opacity-40" />
+                <p className="text-neutral-400 text-sm">Tu carrito está vacío.</p>
                 <Link
-                  href="/catalogo"
+                  href="/discos"
                   onClick={closeCart}
-                  className="inline-block px-4 py-2 rounded bg-[#C89D56] text-[#0E0E0C] text-xs font-semibold hover:bg-[#DDB36D] transition-colors"
+                  className="inline-block px-4 py-2 rounded bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition-colors uppercase font-mono tracking-wider"
                 >
-                  Explorar Catálogo
+                  Explorar Discos
                 </Link>
               </div>
             ) : (
@@ -85,9 +85,17 @@ export const CartDrawer: React.FC = () => {
                   key={item.id}
                   className="flex gap-4 p-3 rounded-lg bg-[#181714] border border-white/5 items-center justify-between"
                 >
-                  {/* Thumbnail / Disc Icon */}
-                  <div className="w-12 h-12 rounded bg-[#282722] flex items-center justify-center shrink-0 border border-white/5">
-                    <Disc className="w-6 h-6 text-[#C89D56]" />
+                  {/* Thumbnail */}
+                  <div className="w-14 h-14 rounded bg-[#282722] flex items-center justify-center shrink-0 border border-white/10 overflow-hidden relative">
+                    {typeof item.imageOrCover === "string" ? (
+                      <img
+                        src={item.imageOrCover}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Disc className="w-6 h-6 text-[#C89D56]" />
+                    )}
                   </div>
 
                   {/* Title & Price */}
@@ -96,8 +104,8 @@ export const CartDrawer: React.FC = () => {
                       {item.title}
                     </h3>
                     <p className="text-[11px] text-[#8B826B] truncate">{item.subtitle}</p>
-                    <p className="text-xs font-mono font-semibold text-[#C89D56] mt-0.5">
-                      {item.priceBs} Bs
+                    <p className="text-xs font-mono font-semibold text-white mt-0.5">
+                      Bs. {item.priceBs.toLocaleString()}
                     </p>
                   </div>
 

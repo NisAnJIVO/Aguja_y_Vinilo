@@ -4,6 +4,9 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScrollProvider } from "@/components/layout/SmoothScrollProvider";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { GlobalProductModal } from "@/components/ui/GlobalProductModal";
+import { FloatingWhatsAppTab } from "@/components/ui/FloatingWhatsAppTab";
+import { CartAddedToast } from "@/components/ui/CartAddedToast";
 
 export const metadata: Metadata = {
   title: "Aguja & Vinilo — Tienda & Club de Vinilos",
@@ -17,13 +20,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="bg-white text-[#111111] antialiased">
+    <html lang="es" data-scroll-behavior="smooth" className="bg-white text-[#111111] antialiased">
       <body className="min-h-screen flex flex-col bg-white text-[#111111] font-sans selection:bg-black selection:text-white">
         <LanguageProvider>
           <SmoothScrollProvider>
             <Navbar />
             <main className="flex-1 w-full bg-white">{children}</main>
             <Footer />
+            <GlobalProductModal />
+            <FloatingWhatsAppTab />
+            <CartAddedToast />
           </SmoothScrollProvider>
         </LanguageProvider>
       </body>

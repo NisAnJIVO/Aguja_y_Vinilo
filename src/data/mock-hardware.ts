@@ -11,7 +11,7 @@ export const MOCK_TURNTABLES: Turntable[] = [
     cartridge: "Ortofon 2M Bronze pre-calibrada con aguja Fine Line Nude",
     chassis: "Plinto de madera de cedro macizo boliviano con tratamiento acústico y patas de latón con desacoplo magnético",
     speeds: "33 ⅓ y 45 RPM con control electrónico óptico de velocidad",
-    description: "Diseñado y ensamblado a mano en nuestro taller de La Paz. El Modelo I combina el peso acústico del cedro estacionado durante 10 años con un plato de acrílico rectificado de 30mm que absorbe cualquier resonancia parasitaria.",
+    description: "Diseñado y ensamblado a mano en nuestro taller de Sucre. El Modelo I combina el peso acústico del cedro estacionado durante 10 años con un plato de acrílico rectificado de 30mm que absorbe cualquier resonancia parasitaria.",
     features: [
       "Brazo cónico de fibra de carbono de 9 pulgadas con rodamientos cerámicos de ultra baja fricción",
       "Motor síncrono DC desacoplado en suspensión de elastómero",

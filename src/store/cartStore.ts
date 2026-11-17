@@ -16,22 +16,7 @@ interface CartState {
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
-  items: [
-    {
-      id: "rec-01",
-      type: "vinyl",
-      title: "Huayno Cósmico: Ecos de Altura",
-      subtitle: "Los Ecos del Illimani — 12\" LP 180g",
-      priceBs: 320,
-      quantity: 1,
-      imageOrCover: {
-        bg: "#2A1810",
-        text: "#F5EBE1",
-        accent: "#C89D56",
-        geometry: "wave"
-      }
-    }
-  ],
+  items: [],
   isOpen: false,
   openCart: () => set({ isOpen: true }),
   closeCart: () => set({ isOpen: false }),
@@ -39,25 +24,36 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   addItem: (item, quantity = 1) => {
     set((state) => {
+      // Validación estricta: Solo se permite 1 suscripción activa como máximo en el carrito
+      if (item.type === "subscription" || item.id === "sub-miembro-plus") {
+        const withoutSub = state.items.filter(
+          (i) => i.id !== "sub-miembro-plus" && i.type !== "subscription"
+        );
+        return {
+          items: [{ ...item, quantity: 1 }, ...withoutSub],
+          isOpen: true,
+        };
+      }
+
       const existing = state.items.find((i) => i.id === item.id);
       if (existing) {
         return {
           items: state.items.map((i) =>
             i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
           ),
-          isOpen: true
+          isOpen: true,
         };
       }
       return {
         items: [...state.items, { ...item, quantity }],
-        isOpen: true
+        isOpen: true,
       };
     });
   },
 
   removeItem: (id) => {
     set((state) => ({
-      items: state.items.filter((i) => i.id !== id)
+      items: state.items.filter((i) => i.id !== id),
     }));
   },
 
@@ -66,12 +62,16 @@ export const useCartStore = create<CartState>((set, get) => ({
       items: state.items
         .map((i) => {
           if (i.id === id) {
+            // Una suscripción no puede multiplicarse: si se resta se elimina, si se suma se mantiene en 1
+            if (i.type === "subscription" || i.id === "sub-miembro-plus") {
+              return delta < 0 ? null : { ...i, quantity: 1 };
+            }
             const newQty = i.quantity + delta;
             return newQty > 0 ? { ...i, quantity: newQty } : null;
           }
           return i;
         })
-        .filter(Boolean) as CartItem[]
+        .filter(Boolean) as CartItem[],
     }));
   },
 

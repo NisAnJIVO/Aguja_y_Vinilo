@@ -13,7 +13,7 @@ export const DISCOS_CATALOG: DiscoItem[] = [
   {
     "id": "disco-01",
     "artist": "Nsqk",
-    "title": "mosca",
+    "title": "SANTURCE",
     "song": "Santurce",
     "year": 2024,
     "coverImage": "/img/discos/disco-01.jpg",

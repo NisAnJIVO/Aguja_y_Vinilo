@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { BleepDiscosCatalog } from "@/components/catalog/BleepDiscosCatalog";
 import type { Metadata } from "next";
 
@@ -10,8 +10,9 @@ export const metadata: Metadata = {
 export default function DiscosPage() {
   return (
     <main className="w-full min-h-screen bg-[#EDEDED]">
-      <BleepDiscosCatalog />
+      <Suspense fallback={<div className="p-12 text-center font-mono text-xs text-neutral-500">Cargando catálogo...</div>}>
+        <BleepDiscosCatalog />
+      </Suspense>
     </main>
   );
 }
-

@@ -113,3 +113,41 @@ body {
     rgba(255, 255, 255, 0.15) 360deg
   );
 }
+
+/* Animaciones de ternura y personalidad para el Cíclope Vinilo */
+@keyframes mascotBob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(1deg);
+  }
+}
+
+@keyframes musicNote1 {
+  0% {
+    transform: translate(0, 0) scale(0.8);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-4px, -12px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+@keyframes musicNote2 {
+  0% {
+    transform: translate(0, 0) scale(0.8);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(5px, -14px) scale(1.15);
+    opacity: 0;
+  }
+}

@@ -27,6 +27,9 @@ export const SmoothScrollProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
 
     lenisRef.current = lenis;
+    if (typeof window !== "undefined") {
+      (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
+    }
 
     function raf(time: number) {
       lenis.raf(time);

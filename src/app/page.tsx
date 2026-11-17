@@ -1,16 +1,18 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { VinylCard, VinylCardProps } from "@/components/catalog/VinylCard";
 import { useLanguage } from "@/context/LanguageContext";
 import { EditorialCarousel } from "@/components/home/EditorialCarousel";
+import { VinylCharacter } from "@/components/ui/VinylCharacter";
 
 // First 3x2 collection: Éxitos de la semana
 const FEATURED_RECORDS: VinylCardProps[] = [
   {
     id: "rec-01",
     artist: "Dayglow",
-    title: "Fuzzybrain",
+    title: "Can I Call You Tonight?",
     price: "Bs. 230",
     catalogNumber: "AV-01",
     coverImage: "/img/discos/dayglow-fuzzybrain.jpg",
@@ -18,7 +20,7 @@ const FEATURED_RECORDS: VinylCardProps[] = [
   {
     id: "rec-02",
     artist: "Oasis",
-    title: "Definitely Maybe",
+    title: "Live Forever",
     price: "Bs. 270",
     catalogNumber: "AV-02",
     coverImage: "/img/discos/oasis-definitely-maybe.jpg",
@@ -26,15 +28,15 @@ const FEATURED_RECORDS: VinylCardProps[] = [
   {
     id: "rec-03",
     artist: "Guns N' Roses",
-    title: "Use Your Illusion I",
+    title: "November Rain",
     price: "Bs. 280",
     catalogNumber: "AV-03",
     coverImage: "/img/discos/guns-n-roses-use-your-illusion-i.jpg",
   },
   {
     id: "rec-04",
-    artist: "Milo j",
-    title: "La Vida Era Más Corta",
+    artist: "Milo J, Silvana Estrada",
+    title: "Cuando El Agua Hirviendo",
     price: "Bs. 220",
     catalogNumber: "AV-04",
     coverImage: "/img/discos/miloj-la-vida-era-mas-corta.jpg",
@@ -50,62 +52,10 @@ const FEATURED_RECORDS: VinylCardProps[] = [
   {
     id: "rec-06",
     artist: "Nsqk",
-    title: "mosca",
+    title: "SANTURCE",
     price: "Bs. 220",
     catalogNumber: "AV-06",
     coverImage: "/img/discos/disco-01.jpg",
-  },
-];
-
-// Second 3x2 collection: Nuevos lanzamientos (abajo del banner editorial)
-const NEW_RELEASES_RECORDS: VinylCardProps[] = [
-  {
-    id: "rec-07",
-    artist: "Paco de Lucía",
-    title: "Solo Quiero Caminar",
-    price: "£30.00",
-    catalogNumber: "VF-307",
-    coverImage: "https://upload.wikimedia.org/wikipedia/commons/4/47/%22Solo_Quiero_Caminar%22_by_Paco_de_Lucia%3B_Side_1_label_of_the_Philips_LP_release.jpg",
-  },
-  {
-    id: "rec-08",
-    artist: "Emerson, Lake & Palmer",
-    title: "Brain Salad Surgery (180g Pressing)",
-    price: "£32.00",
-    catalogNumber: "VF-308",
-    coverImage: "https://upload.wikimedia.org/wikipedia/commons/2/2d/Emerson_Lake_%26_Palmer_-_LP_with_Manticore.jpg",
-  },
-  {
-    id: "rec-09",
-    artist: "ABBA",
-    title: "The Best of ABBA (1975 Virgin Vinyl)",
-    price: "£26.00",
-    catalogNumber: "VF-309",
-    coverImage: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Best_of_ABBA_vinyl_1975.jpg",
-  },
-  {
-    id: "rec-10",
-    artist: "Almendra",
-    title: "Almendra (Original Master 180g)",
-    price: "£34.00",
-    catalogNumber: "VF-310",
-    coverImage: "https://upload.wikimedia.org/wikipedia/commons/3/3c/Almendra_%281969%29%2C_1st_album_by_Almendra_-_Long_Play_vinyl_record_-_RCA_Victor_Yellow_label.jpg",
-  },
-  {
-    id: "rec-11",
-    artist: "Sui Generis",
-    title: "Confesiones de Invierno",
-    price: "£29.00",
-    catalogNumber: "VF-311",
-    coverImage: "https://upload.wikimedia.org/wikipedia/commons/3/32/Confesiones_de_Invierno.jpg",
-  },
-  {
-    id: "rec-12",
-    artist: "Kraftwerk",
-    title: "Computer World (Audiophile Gatefold)",
-    price: "£35.00",
-    catalogNumber: "VF-312",
-    coverImage: "https://upload.wikimedia.org/wikipedia/commons/7/73/150518-Philips-Kraftwerk-01.jpg",
   },
 ];
 
@@ -140,20 +90,11 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-black/25" />
 
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 text-center">
-          <h1
-            style={{
-              fontFamily: "'IBM Plex Sans', sans-serif",
-              letterSpacing: "-0.03em",
-            }}
-            className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold uppercase tracking-tight leading-none drop-shadow-[0_4px_28px_rgba(0,0,0,0.9)]"
-          >
-            Aguja &amp; Vinilo
+          <h1 className="font-serif text-white text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight leading-tight sm:leading-none drop-shadow-[0_4px_28px_rgba(0,0,0,0.9)]">
+            {t.hero.title}
           </h1>
-          <p
-            style={{ fontFamily: "'IBM Plex Sans', sans-serif" }}
-            className="text-white/90 text-sm sm:text-base md:text-lg font-normal tracking-tight max-w-2xl mx-auto mt-3 sm:mt-5 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] leading-relaxed"
-          >
-            En este sitio puedes encontrar tu catálogo favorito de discos de vinilo, tornamesas y tocadiscos analógicos, muebles de diseño para tus equipos y objetos de colección musical.
+          <p className="font-sans text-white/90 text-xs sm:text-base md:text-lg font-light tracking-tight max-w-2xl mx-auto mt-2.5 sm:mt-5 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] leading-relaxed">
+            {t.hero.description}
           </p>
         </div>
       </div>
@@ -195,28 +136,167 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          CAPA 3: SEGUNDO TELÓN BLANCO (NUEVOS LANZAMIENTOS)
+          CAPA 3: SEGUNDO TELÓN BLANCO (INFORMACIÓN, ENVÍOS Y REDES - ESTILO VINYL FACTORY)
           Sube deslizándose DIRECTAMENTE por encima del banner anterior, tapándolo.
          ========================================================================= */}
       <div className="relative z-20 bg-white shadow-[0_-20px_45px_rgba(0,0,0,0.25)]">
-        <section className="w-full bg-white py-14 sm:py-24 px-4 sm:px-6 lg:px-8">
+        <section className="w-full bg-white py-12 sm:py-24 px-4 sm:px-12 lg:px-16">
           <div className="w-full max-w-[1520px] mx-auto">
-            {/* Encabezado Editorial Serif */}
-            <div className="mb-10 sm:mb-14">
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-black leading-tight">
-                {t.catalog.title2}
-              </h2>
-              <p className="font-serif italic text-base sm:text-lg lg:text-xl text-gray-600 font-light mt-2">
-                {t.catalog.subtitle2}
-              </p>
+            
+            {/* -------------------------------------------------------------------
+                BLOQUE 1: IDENTIDAD & PROPÓSITO (Estilo Vinyl Space Soho)
+               ------------------------------------------------------------------- */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-14 items-start">
+              <div className="lg:col-span-5">
+                <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-black leading-tight">
+                  {t.homeManifesto.title}
+                </h2>
+                <span className="font-mono text-xs uppercase tracking-widest text-neutral-500 block mt-2">
+                  {t.homeManifesto.badge}
+                </span>
+              </div>
+
+              <div className="lg:col-span-7 space-y-4 text-sm sm:text-base text-neutral-700 leading-relaxed font-light">
+                <p>{t.homeManifesto.p1}</p>
+                <p>{t.homeManifesto.p2}</p>
+                <div className="pt-3">
+                  <Link
+                    href="/discos"
+                    className="inline-block px-5 py-2.5 border border-black text-black hover:bg-black hover:text-white transition-colors text-xs font-mono uppercase tracking-wider"
+                  >
+                    {t.homeManifesto.btn}
+                  </Link>
+                </div>
+              </div>
             </div>
 
-            {/* Segunda grilla limpia de 3 columnas x 2 filas */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-12 sm:gap-x-16 lg:gap-x-20 gap-y-12 sm:gap-y-16">
-              {NEW_RELEASES_RECORDS.map((record) => (
-                <VinylCard key={record.id} {...record} />
-              ))}
+            {/* Separador sutil */}
+            <div className="w-full border-b border-neutral-200 my-12 sm:my-18" />
+
+            {/* -------------------------------------------------------------------
+                BLOQUE 2: ENVÍOS & COMPRAS (Estilo Venue Information / Hire Fees)
+               ------------------------------------------------------------------- */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-16">
+              
+              {/* Columna Izquierda: Envíos & Cobertura */}
+              <div className="space-y-4">
+                <h3 className="font-mono text-xs uppercase tracking-widest text-black font-bold">
+                  {t.homeShipping.title}
+                </h3>
+                <div className="space-y-3 text-xs sm:text-sm text-neutral-600 leading-relaxed font-normal">
+                  <p>
+                    <strong className="text-neutral-900 font-medium">{t.homeShipping.destsTitle}</strong> {t.homeShipping.destsText}
+                  </p>
+                  <p>
+                    <strong className="text-neutral-900 font-medium">{t.homeShipping.timeTitle}</strong> {t.homeShipping.timeText}
+                  </p>
+                  <p>
+                    <strong className="text-neutral-900 font-medium">{t.homeShipping.packTitle}</strong> {t.homeShipping.packText}
+                  </p>
+                  <p>
+                    <strong className="text-neutral-900 font-medium">{t.homeShipping.trackTitle}</strong> {t.homeShipping.trackText}
+                  </p>
+                </div>
+              </div>
+
+              {/* Columna Derecha: Compras, Pagos & Garantía */}
+              <div className="space-y-4">
+                <h3 className="font-mono text-xs uppercase tracking-widest text-black font-bold">
+                  {t.homePayment.title}
+                </h3>
+                <div className="space-y-3 text-xs sm:text-sm text-neutral-600 leading-relaxed font-normal">
+                  <p>
+                    <strong className="text-neutral-900 font-medium">{t.homePayment.storeTitle}</strong> {t.homePayment.storeText}
+                  </p>
+                  <p>
+                    <strong className="text-neutral-900 font-medium">{t.homePayment.methodsTitle}</strong> {t.homePayment.methodsText}
+                  </p>
+                  <p>
+                    <strong className="text-neutral-900 font-medium">{t.homePayment.qualityTitle}</strong> {t.homePayment.qualityText}
+                  </p>
+                  <p>
+                    <strong className="text-neutral-900 font-medium">{t.homePayment.whatsappTitle}</strong> {t.homePayment.whatsappText}
+                  </p>
+                </div>
+              </div>
+
             </div>
+
+            {/* Separador sutil */}
+            <div className="w-full border-b border-neutral-200 my-12 sm:my-18" />
+
+            {/* -------------------------------------------------------------------
+                BLOQUE 3: HÍBRIDO REDES SOCIALES & GRAN LOGO EMBLEMA (Estilo Captura 1)
+               ------------------------------------------------------------------- */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center justify-between">
+              
+              {/* Canales y Redes Sociales */}
+              <div className="md:col-span-7 space-y-6">
+                <div className="space-y-2.5">
+                  <h4 className="font-mono text-xs uppercase tracking-widest text-neutral-400 font-bold mb-3">
+                    {t.homeSocial.title}
+                  </h4>
+                  <ul className="space-y-2.5 font-serif text-lg sm:text-xl text-neutral-900">
+                    <li>
+                      <a
+                        href="https://www.tiktok.com/@agujayvinilos"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline hover:opacity-65 transition-opacity"
+                      >
+                        TikTok
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://www.instagram.com/ajuga_y_vinilo/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline hover:opacity-65 transition-opacity"
+                      >
+                        Instagram
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="mailto:jivo3534@gmail.com"
+                        className="hover:underline hover:opacity-65 transition-opacity"
+                      >
+                        Gmail
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="https://wa.me/59168610314"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline hover:opacity-65 transition-opacity"
+                      >
+                        WhatsApp
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="pt-2 text-xs font-mono text-neutral-400 space-y-1">
+                  <p>{t.homeSocial.line1}</p>
+                  <p>{t.homeSocial.line2}</p>
+                  <p>{t.homeSocial.line3}</p>
+                </div>
+              </div>
+
+              {/* Gran Emblema Protagonista con la Mascota Cíclope Vinilo */}
+              <div className="md:col-span-5 flex flex-col items-center md:items-end justify-center select-none">
+                <div className="w-36 h-36 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-full bg-black text-white flex items-center justify-center p-6 sm:p-9 shadow-2xl transition-transform hover:scale-105 duration-300">
+                  <VinylCharacter size="100%" inverted={true} pose="headphones" interactive={true} />
+                </div>
+                <span className="text-[11px] font-mono tracking-widest uppercase text-neutral-500 mt-4 text-center md:text-right">
+                  Aguja &amp; Vinilo • Bolivia
+                </span>
+              </div>
+
+            </div>
+
           </div>
         </section>
       </div>
