@@ -14,7 +14,7 @@ export default function PrivacidadPage() {
       <div className="w-full max-w-[1520px] mx-auto space-y-16 sm:space-y-24">
         
         {/* =====================================================================
-            ENCABEZADO EDITORIAL
+            ENCABEZADO EDITORIAL 2
            ===================================================================== */}
         <div className="border-b border-black/10 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
