@@ -92,6 +92,11 @@ export default function RootLayout({
             <GlobalProductModal />
             <FloatingWhatsAppTab />
             <CartAddedToast />
+            {/* Overlay sutil de grano analógico (film grain) */}
+            <div
+              aria-hidden="true"
+              className="film-grain-overlay pointer-events-none fixed inset-0 z-[99] select-none"
+            />
           </SmoothScrollProvider>
         </LanguageProvider>
       </body>
