@@ -6,6 +6,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
 import { useLanguage } from "@/context/LanguageContext";
 import { X, ShoppingCart, Plus, Minus } from "lucide-react";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export const GlobalProductModal: React.FC = () => {
   const { isOpen, product, closeModal } = useProductModalStore();
@@ -140,15 +141,17 @@ export const GlobalProductModal: React.FC = () => {
             </div>
           </div>
 
-          {/* BOTÓN PROTAGONISTA: AGREGAR AL CARRITO */}
-          <button
-            type="button"
-            onClick={handleAddToCart}
-            className="w-full py-3.5 px-5 rounded-md font-mono text-xs sm:text-sm uppercase tracking-wider font-semibold flex items-center justify-center gap-2.5 transition-all duration-200 bg-black hover:bg-neutral-800 text-white shadow-lg active:scale-98 cursor-pointer"
-          >
-            <ShoppingCart className="w-4 h-4 stroke-[2]" />
-            <span>{isEn ? "Add to Cart" : "Agregar al Carrito"}</span>
-          </button>
+          {/* BOTÓN PROTAGONISTA: AGREGAR AL CARRITO CON EFECTO MAGNÉTICO */}
+          <MagneticButton className="w-full">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              className="w-full py-3.5 px-5 rounded-md font-mono text-xs sm:text-sm uppercase tracking-wider font-semibold flex items-center justify-center gap-2.5 transition-all duration-200 bg-black hover:bg-neutral-800 text-white shadow-lg active:scale-98 cursor-pointer"
+            >
+              <ShoppingCart className="w-4 h-4 stroke-[2]" />
+              <span>{isEn ? "Add to Cart" : "Agregar al Carrito"}</span>
+            </button>
+          </MagneticButton>
         </div>
       </div>
     </div>

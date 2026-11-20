@@ -11,6 +11,7 @@ import { useProductModalStore } from "@/store/productModalStore";
 import { useSearchStore } from "@/store/searchStore";
 import { VinylCharacter } from "@/components/ui/VinylCharacter";
 import { ScrambleText } from "@/components/ui/ScrambleText";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 import { DISCOS_CATALOG } from "@/data/discosData";
 import { MOCK_TURNTABLES } from "@/data/mock-hardware";
 import { MOCK_FURNITURE } from "@/data/mock-furniture";
@@ -504,33 +505,35 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* BOTÓN CARRITO */}
-          <Link
-            href="/carrito"
-            onClick={() => {
-              setSearchTerm("");
-              clearSearch();
-              setIsSearchOpen(false);
-              setIsMobileSearchExpanded(false);
-            }}
-            aria-label="Ver Carrito de Compras"
-            className="flex items-center gap-2 select-none group text-black focus:outline-none shrink-0"
-          >
-            <div className="relative">
-              <ShoppingCart className="w-5 h-5 stroke-[1.8] group-hover:scale-105 transition-transform" />
-              {totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-black text-white text-[10px] font-mono font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </div>
-            <span
-              style={{ fontFamily: "'IBM Plex Sans', sans-serif", letterSpacing: "-0.5px" }}
-              className="text-xs font-bold uppercase tracking-wider hidden sm:inline"
+          {/* BOTÓN CARRITO CON EFECTO MAGNÉTICO GSAP */}
+          <MagneticButton>
+            <Link
+              href="/carrito"
+              onClick={() => {
+                setSearchTerm("");
+                clearSearch();
+                setIsSearchOpen(false);
+                setIsMobileSearchExpanded(false);
+              }}
+              aria-label="Ver Carrito de Compras"
+              className="flex items-center gap-2 select-none group text-black focus:outline-none shrink-0 px-2 py-1"
             >
-              <ScrambleText text={t.nav.cart} />
-            </span>
-          </Link>
+              <div className="relative">
+                <ShoppingCart className="w-5 h-5 stroke-[1.8] group-hover:scale-105 transition-transform" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-black text-white text-[10px] font-mono font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </div>
+              <span
+                style={{ fontFamily: "'IBM Plex Sans', sans-serif", letterSpacing: "-0.5px" }}
+                className="text-xs font-bold uppercase tracking-wider hidden sm:inline"
+              >
+                <ScrambleText text={t.nav.cart} />
+              </span>
+            </Link>
+          </MagneticButton>
 
         </div>
       </div>

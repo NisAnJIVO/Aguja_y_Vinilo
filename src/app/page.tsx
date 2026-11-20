@@ -10,6 +10,7 @@ import { VinylCharacter } from "@/components/ui/VinylCharacter";
 import { ScrambleText } from "@/components/ui/ScrambleText";
 import { VelocityMarquee } from "@/components/home/VelocityMarquee";
 import { InitialPreloader } from "@/components/home/InitialPreloader";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 
 // First 3x2 collection: Éxitos de la semana
 const FEATURED_RECORDS: VinylCardProps[] = [
@@ -221,12 +222,14 @@ export default function HomePage() {
                 <p>{t.homeManifesto.p1}</p>
                 <p>{t.homeManifesto.p2}</p>
                 <div className="pt-3">
-                  <Link
-                    href="/discos"
-                    className="inline-block px-5 py-2.5 border border-black text-black hover:bg-black hover:text-white transition-colors text-xs font-mono uppercase tracking-wider"
-                  >
-                    <ScrambleText text={t.homeManifesto.btn} />
-                  </Link>
+                  <MagneticButton>
+                    <Link
+                      href="/discos"
+                      className="inline-block px-5 py-2.5 border border-black text-black hover:bg-black hover:text-white transition-colors text-xs font-mono uppercase tracking-wider"
+                    >
+                      <ScrambleText text={t.homeManifesto.btn} />
+                    </Link>
+                  </MagneticButton>
                 </div>
               </div>
             </div>
