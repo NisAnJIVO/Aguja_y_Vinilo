@@ -1,335 +1,310 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useRef } from "react";
+import Image from "next/image";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useCartStore } from "@/store/cartStore";
+import { useToastStore } from "@/store/toastStore";
 import { useProductModalStore } from "@/store/productModalStore";
-import { useLanguage } from "@/context/LanguageContext";
-import { useSearchStore } from "@/store/searchStore";
-import { X } from "lucide-react";
+import { HoverRollText } from "@/components/ui/HoverRollText";
+import { MessageCircle, ShoppingCart } from "lucide-react";
 
-interface MuebleItem {
+interface RackFurniture {
   id: number;
   name: string;
-  nameEn?: string;
   type: string;
-  typeEn?: string;
+  capacity: string;
+  dimensions: string;
+  materials: string;
   priceBs: number;
   desc: string;
-  descEn?: string;
   image: string;
 }
 
-const MUEBLES_ITEMS: MuebleItem[] = [
+const RACKS_ITEMS: RackFurniture[] = [
   {
     id: 1,
     name: "Credenza Retro Esquinas Curvas",
-    nameEn: "Curved-Corner Retro Credenza",
-    type: "Mueble Aparador Mediano",
-    typeEn: "Mid-Sized Sideboard Console",
+    type: "Aparador Acústico Mediano",
+    capacity: "Hasta 220 vinilos",
+    dimensions: "120 × 75 × 45 cm",
+    materials: "Nogal macizo lustrado y herrajes de acero",
     priceBs: 2400,
-    desc: "Nogal cálido con marco envolvente redondeado, estantes dobles para discos y puerta vertical independiente.",
-    descEn: "Warm walnut with rounded wrap-around frame, dual record shelves, and independent vertical door.",
+    desc: "Cuerpo en nogal cálido con marco envolvente redondeado, estantes dobles para vinilos en posición vertical y puerta con bisagras de cierre suave.",
     image: "/img/Muebles/1.jpg",
   },
   {
     id: 2,
     name: "Mesa Consola Ovalada Compacta",
-    nameEn: "Compact Oval Console Table",
-    type: "Mesa Auxiliar / Tocadiscos",
-    typeEn: "Turntable & Vinyl Accent Table",
+    type: "Mesa para Tocadiscos",
+    capacity: "Hasta 90 vinilos",
+    dimensions: "85 × 70 × 40 cm",
+    materials: "Madera oscura natural y patas torneadas",
     priceBs: 1450,
-    desc: "Cuerpo ovalado retro en madera oscura con bahía abierta izquierda y dos cajones cilíndricos.",
-    descEn: "Retro dark-wood oval body featuring open left bay and twin cylindrical accessory drawers.",
+    desc: "Silueta ovalada con nicho abierto lateral para ojear portadas de frente y dos cajones cilíndricos para cepillos y accesorios.",
     image: "/img/Muebles/2.jpg",
   },
   {
     id: 3,
     name: "Consola Angular Trapezoidal",
-    nameEn: "Trapezoidal Angle Audio Console",
-    type: "Mueble de Autor Mid-Century",
-    typeEn: "Mid-Century Designer Piece",
+    type: "Mueble Mid-Century de Autor",
+    capacity: "Hasta 160 vinilos",
+    dimensions: "110 × 72 × 42 cm",
+    materials: "Roble americano y tiradores uñero ocultos",
     priceBs: 2100,
-    desc: "Geometría oblicua artesanal con 2 cajones anchos con uñero y doble estante abierto para amplificador y vinilos.",
-    descEn: "Handcrafted oblique geometry with 2 wide flush-pull drawers and dual open shelves for amp and LPs.",
+    desc: "Líneas oblicuas artesanales con 2 cajones anchos y estantes abiertos divididos para receptor estéreo, amplificador y vinilos.",
     image: "/img/Muebles/3.jpg",
   },
   {
     id: 4,
     name: "Gran Credenza Clásica con Arcos de Vidrio",
-    nameEn: "Grand Classic Credenza with Arched Glass",
     type: "Aparador Monumental",
-    typeEn: "Monumental Audiophile Sideboard",
+    capacity: "Hasta 450 vinilos",
+    dimensions: "190 × 85 × 48 cm",
+    materials: "Madera noble maciza, vidrio y latón dorado",
     priceBs: 4800,
-    desc: "Pieza de gran formato (~2m) con 4 puertas con vidrieras en arco, 2 cajones centrales y herrajes de latón dorado.",
-    descEn: "Large format piece (~2m) with 4 arched glass doors, 2 center drawers, and brushed brass hardware.",
+    desc: "Mueble de gran formato para colecciones extensas con 4 puertas acristaladas, cajones centrales y cubierta reforzada para equipo pesado.",
     image: "/img/Muebles/4.jpg",
   },
   {
     id: 5,
-    name: "Aparador Mid-Century con Puertas de Ratán",
-    nameEn: "Mid-Century Sideboard with Woven Rattan Doors",
-    type: "Mueble Acústico Cannage",
-    typeEn: "Cannage Acoustic Audio Unit",
+    name: "Aparador Mid-Century con Celosía de Ratán",
+    type: "Mueble Acústico Transpirable",
+    capacity: "Hasta 280 vinilos",
+    dimensions: "140 × 78 × 45 cm",
+    materials: "Roble claro y celosía tejida de mimbre",
     priceBs: 3200,
-    desc: "Frontal con celosía trenzada de mimbre natural que permite el paso del sonido, con nicho central para tornamesa o receptor.",
-    descEn: "Natural cane lattice front that lets sound pass freely, with central bay for turntable or audio receiver.",
+    desc: "Frontal con tejido natural que permite el paso libre del sonido para colocar bafles o amplificadores en el interior sin recalentamiento.",
     image: "/img/Muebles/5.jpg",
   },
   {
     id: 6,
     name: "Estantería Consola 4 Nichos Redondeados",
-    nameEn: "4-Niche Soft-Edge Console Bookshelf",
     type: "Estante Modular de Roble",
-    typeEn: "Modular Oak Storage Shelf",
+    capacity: "Hasta 200 vinilos",
+    dimensions: "95 × 80 × 40 cm",
+    materials: "Roble macizo europeo con cantos biselados",
     priceBs: 1950,
-    desc: "Estructura diáfana de roble macizo con 4 compartimentos de borde suave diseñados para almacenar hasta 200 LPs.",
-    descEn: "Solid oak structure featuring 4 soft-contoured cube bays tailored to store up to 200 LP records.",
+    desc: "Cuatro compartimentos cúbicos dimensionados exactamente para carpetas LP de 12 pulgadas con base amortiguada antivibración.",
     image: "/img/Muebles/6.jpg",
   },
   {
     id: 7,
-    name: "Aparador Escandinavo Vintage 3 Cajones",
-    nameEn: "Vintage Scandinavian 3-Drawer Credenza",
+    name: "Aparador Escandinavo 3 Cajones",
     type: "Consola Danesa Clásica",
-    typeEn: "Classic Danish Modern Console",
+    capacity: "Hasta 250 vinilos",
+    dimensions: "150 × 74 × 44 cm",
+    materials: "Teca tratada al aceite y tiradores esculpidos",
     priceBs: 3600,
-    desc: "Madera maciza lustrada con tiradores de madera esculpidos a mano, 3 cajones centrales y 2 puertas laterales de gran capacidad.",
-    descEn: "Lustrous solid timber with hand-carved wood handles, 3 central drawers, and 2 deep lateral cabinets.",
+    desc: "Tres cajones centrales para almacenamiento de discos 7 pulgadas y cables, con dos armarios laterales de gran profundidad.",
     image: "/img/Muebles/7.jpg",
   },
   {
     id: 8,
     name: "Mueble Escultórico Asimétrico",
-    nameEn: "Asymmetric Sculptural Audio Cabinet",
-    type: "Mobiliario de Colección",
-    typeEn: "Collector Art Furniture",
+    type: "Diseño Contemporáneo de Carpintería",
+    capacity: "Hasta 180 vinilos",
+    dimensions: "125 × 76 × 42 cm",
+    materials: "Madera natural veteada y estructura de hierro",
     priceBs: 4200,
-    desc: "Diseño vanguardista con puerta lateral facetada en ángulo y veta cruzada de madera noble sobre patas estilizadas.",
-    descEn: "Avant-garde silhouette with angular faceted side door and bookmatched grain atop tapered legs.",
+    desc: "Frontal facetado en ángulo con veta emparejada a libro y compartimento superior para tocadiscos de alta fidelidad.",
     image: "/img/Muebles/8.jpg",
-  },
-  {
-    id: 9,
-    name: "Buffet Arquitectónico Acanalado de Lujo",
-    nameEn: "Luxury Fluted Architectural Audio Buffet",
-    type: "Aparador Palillería Premium",
-    typeEn: "Premium Fluted Wood Sideboard",
-    priceBs: 5400,
-    desc: "Frontal monumental de listones acanalados con arcos en relieve, patas estriadas y tapa superior amplia para equipo Hi-Fi.",
-    descEn: "Monumental fluted wood slat front with relief arches, reeded legs, and wide top deck for heavy Hi-Fi gear.",
-    image: "/img/Muebles/9.jpg",
-  },
-  {
-    id: 10,
-    name: "Mesa Consola Baja Aerodinámica",
-    nameEn: "Aerodynamic Low-Profile Console Table",
-    type: "Mesa de Centro para Vinilos",
-    typeEn: "Vinyl Coffee & Turntable Table",
-    priceBs: 1600,
-    desc: "Diseño cápsula retro-futurista con nicho deslizante en acabado verde petróleo, ideal para tocadiscos compacto y revistas.",
-    descEn: "Retro-futuristic capsule design with sliding teal bay, ideal for compact players, vinyls, and magazines.",
-    image: "/img/Muebles/10.jpg",
-  },
-  {
-    id: 11,
-    name: "Consola de Audio Integral Futurista",
-    nameEn: "Futuristic All-in-One Space Console",
-    type: "Sistema de Sonido Todo-en-Uno",
-    typeEn: "All-in-One Integrated Sound System",
-    priceBs: 6800,
-    desc: "Consola escultórica inspirada en el diseño espacial de los 70s, con altavoces estéreo incorporados, tornamesa y tapa acrílica tintada.",
-    descEn: "Sculptural console inspired by 70s Space Age design, complete with stereo speakers, deck, and tinted dome.",
-    image: "/img/Muebles/11.jpg",
-  },
-  {
-    id: 12,
-    name: "Banco Estéreo de Madera Maciza DOOPER",
-    nameEn: "DOOPER Solid Wood Stereo Acoustic Bench",
-    type: "Consola Soundbar de Autor",
-    typeEn: "Designer Soundbar Credenza",
-    priceBs: 4900,
-    desc: "Bloque de roble natural con sistema de bafles estéreo integrados en el frente y plataforma superior libre para tocadiscos.",
-    descEn: "Solid natural oak monolith with front-integrated stereo drivers and open top deck for high-end decks.",
-    image: "/img/Muebles/12.jpg",
-  },
-  {
-    id: 13,
-    name: "Torre Minimalista para 150 Discos",
-    nameEn: "Minimalist 150-Record Upright Tower",
-    type: "Torre Vertical Compacta",
-    typeEn: "Compact Vertical LP Tower",
-    priceBs: 1300,
-    desc: "Estructura vertical esbelta para espacios reducidos con repisa superior para tocadiscos y nichos divididos.",
-    descEn: "Slender vertical storage for compact living rooms, with top player tray and segregated album cubbies.",
-    image: "/img/Muebles/13.jpg",
-  },
-  {
-    id: 14,
-    name: "Aparador Vintage con Racks de Exhibición Frontal",
-    nameEn: "Vintage Credenza with Front-Display Bins",
-    type: "Aparador Flip-Bin de Roble",
-    typeEn: "Oak Flip-Bin Record Console",
-    priceBs: 3800,
-    desc: "Permite ojear las portadas hacia el frente como en una disquería, con amplios estantes inferiores y cajón de accesorios.",
-    descEn: "Allows crate-digging style browsing of cover art, with deep lower shelves and accessory drawers.",
-    image: "/img/Muebles/14.jpg",
-  },
-  {
-    id: 15,
-    name: "Mesa Auxiliar Minimalista en Nogal Oscuro",
-    nameEn: "Minimalist Dark Walnut Accent Stand",
-    type: "Soporte Compacto para Deck",
-    typeEn: "Compact Audio Deck Stand",
-    priceBs: 1100,
-    desc: "Patas inclinadas cónicas con estante inferior ranurado para guardar 40 discos de uso diario.",
-    descEn: "Tapered angled legs with slotted bottom shelf holding up to 40 daily rotation vinyl records.",
-    image: "/img/Muebles/15.jpg",
-  },
-  {
-    id: 16,
-    name: "Credenza Industrial Hierro & Madera Reciclada",
-    nameEn: "Industrial Iron & Reclaimed Timber Credenza",
-    type: "Mueble Brutalista Pesado",
-    typeEn: "Heavy Brutalist Audio Unit",
-    priceBs: 3400,
-    desc: "Estructura de perfiles de acero soldado al carbono combinada con tablones gruesos de madera recuperada tratada.",
-    descEn: "Welded carbon steel perimeter frame paired with thick reclaimed solid timber planks.",
-    image: "/img/Muebles/16.jpg",
   },
 ];
 
 export default function RacksPage() {
+  const { addItem } = useCartStore();
+  const { showToast } = useToastStore();
   const { openModal } = useProductModalStore();
-  const { language, t } = useLanguage();
-  const { searchQuery, clearSearch } = useSearchStore();
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => {
-    setMounted(true);
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const cards = gridRef.current?.querySelectorAll(".rack-card");
+    if (!cards || cards.length === 0) return;
+
+    cards.forEach((card) => {
+      gsap.fromTo(
+        card,
+        {
+          clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
+          opacity: 0,
+          y: 35,
+        },
+        {
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: card,
+            start: "top 88%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
   }, []);
 
-  const q = mounted ? searchQuery.trim().toLowerCase() : "";
+  const handleAddToCart = (item: RackFurniture) => {
+    addItem(
+      {
+        id: `rack-${item.id}`,
+        type: "furniture",
+        title: item.name,
+        subtitle: item.type,
+        priceBs: item.priceBs,
+        imageOrCover: item.image,
+      },
+      1
+    );
+    showToast(item.name);
+  };
 
-  const filteredItems = useMemo(() => {
-    if (!q) return MUEBLES_ITEMS;
-    return MUEBLES_ITEMS.filter((item) => {
-      const matchName =
-        item.name.toLowerCase().includes(q) ||
-        (item.nameEn && item.nameEn.toLowerCase().includes(q));
-      const matchType =
-        item.type.toLowerCase().includes(q) ||
-        (item.typeEn && item.typeEn.toLowerCase().includes(q));
-      const matchDesc =
-        item.desc.toLowerCase().includes(q) ||
-        (item.descEn && item.descEn.toLowerCase().includes(q));
-      return matchName || matchType || matchDesc;
+  const handleOpenDetail = (item: RackFurniture) => {
+    openModal({
+      id: `rack-${item.id}`,
+      title: item.name,
+      subtitle: item.type,
+      categoryLabel: "Mobiliario & Racks",
+      priceBs: item.priceBs,
+      image: item.image,
+      description: `${item.desc} • Capacidad: ${item.capacity} • Medidas: ${item.dimensions} • Materiales: ${item.materials}.`,
+      type: "furniture",
     });
-  }, [q]);
-
-  const isEn = language === "en";
+  };
 
   return (
-    <main suppressHydrationWarning className="w-full min-h-screen bg-[#EDEDED] text-black py-8 sm:py-20 px-4 sm:px-10 lg:px-16">
-      <div className="w-full max-w-[1720px] mx-auto">
-        
-        {/* Encabezado */}
-        <div className="mb-8 sm:mb-12 border-b border-black/10 pb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-black">
-              {t.racks.title}
-            </h1>
-            <span className="font-mono text-xs uppercase tracking-widest text-neutral-500 block mt-2">
-              {t.racks.subtitle}
-            </span>
-          </div>
+    <div className="w-full min-h-screen bg-[#F7F7F7] text-[#111111] select-none">
+      {/* HERO EDITORIAL */}
+      <header className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-8 border-b border-black/15">
+        <span className="font-mono text-xs uppercase tracking-widest text-neutral-500 block mb-2">
+          Carpintería Especializada • Estudio de Diseño
+        </span>
+        <h1 className="font-serif text-4xl sm:text-6xl font-normal tracking-tight text-[#111111]">
+          Racks y Muebles
+        </h1>
+        <p className="font-sans text-sm sm:text-base text-neutral-600 font-light mt-2 max-w-2xl">
+          Mobiliario artesanal en madera noble y acero estructural diseñado para proteger, organizar y exhibir tu colección con estabilidad acústica.
+        </p>
+      </header>
 
-          {mounted && q && (
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-mono text-neutral-600">
-                {filteredItems.length} {t.racks.itemsFound}
-              </span>
-              <button
-                type="button"
-                onClick={clearSearch}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded font-mono text-xs uppercase tracking-wider hover:bg-neutral-800 transition-colors cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-                <span>{t.racks.clearFilter}</span>
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Mensaje de sin resultados */}
-        {filteredItems.length === 0 ? (
-          <div className="bg-white p-12 text-center rounded border border-black/10 my-8">
-            <p className="font-serif text-lg text-neutral-800 mb-2">
-              {t.racks.noResults}
-            </p>
-            <p className="text-xs font-mono text-neutral-500 mb-6">
-              &ldquo;{searchQuery}&rdquo;
-            </p>
-            <button
-              type="button"
-              onClick={clearSearch}
-              className="px-4 py-2 bg-black text-white rounded font-mono text-xs uppercase cursor-pointer"
+      {/* GRILLA EDITORIAL DE 2 COLUMNAS (1 EN MÓVIL) CON REVELADO CLIP-PATH */}
+      <div
+        ref={gridRef}
+        className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-14"
+      >
+        {RACKS_ITEMS.map((item) => (
+          <article
+            key={item.id}
+            className="rack-card group flex flex-col bg-white border border-black/10 overflow-hidden shadow-sm hover:border-black/40 hover:shadow-md transition-all"
+          >
+            {/* FOTO GRANDE DEL MUEBLE CON ZOOM MÍNIMO EN HOVER */}
+            <div
+              onClick={() => handleOpenDetail(item)}
+              data-cursor="VER"
+              className="relative w-full aspect-[16/11] bg-[#EEEEEE] overflow-hidden cursor-pointer"
             >
-              {t.racks.clearFilter}
-            </button>
-          </div>
-        ) : (
-          /* Grilla 4x4 */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
-            {filteredItems.map((item) => {
-              const displayName = isEn && item.nameEn ? item.nameEn : item.name;
-              const displayType = isEn && item.typeEn ? item.typeEn : item.type;
-              const displayDesc = isEn && item.descEn ? item.descEn : item.desc;
+              <Image
+                src={item.image}
+                alt={item.name}
+                fill
+                unoptimized
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+              />
+              <div className="absolute top-3 left-3 bg-black/85 backdrop-blur-xs font-mono text-[10px] text-white px-2.5 py-1 uppercase tracking-wider">
+                {item.type}
+              </div>
+            </div>
 
-              return (
-                <div
-                  key={item.id}
-                  onClick={() =>
-                    openModal({
-                      id: `rack-${item.id}`,
-                      title: displayName,
-                      subtitle: displayType,
-                      categoryLabel: isEn ? "Vinyl Furniture & Racks" : "Muebles & Racks de Vinilo",
-                      priceBs: item.priceBs,
-                      image: item.image,
-                      description: displayDesc,
-                      type: "furniture",
-                    })
-                  }
-                  className="flex flex-col select-none group cursor-pointer transition-transform duration-200 hover:-translate-y-0.5"
+            {/* ESPECIFICACIONES CLARAS Y DIRECTAS */}
+            <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between text-left">
+              <div>
+                <h2
+                  onClick={() => handleOpenDetail(item)}
+                  className="font-serif text-2xl sm:text-3xl font-normal text-[#111111] leading-tight cursor-pointer hover:opacity-75 transition-opacity"
                 >
-                  <div className="relative w-full aspect-[4/3] bg-white rounded-sm overflow-hidden border border-black/5 shadow-sm">
-                    <img
-                      src={item.image}
-                      alt={displayName}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="pt-3.5 flex flex-col">
-                    <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-500">
-                      {displayType}
-                    </span>
-                    <h3 className="font-serif text-base sm:text-[17px] font-normal text-black mt-1 leading-snug group-hover:opacity-75 transition-opacity">
-                      {displayName}
-                    </h3>
-                    <p className="font-sans text-xs text-neutral-600 mt-1 line-clamp-2 leading-relaxed font-light">
-                      {displayDesc}
-                    </p>
-                    <p className="text-sm font-bold font-mono text-black mt-2">
-                      Bs. {item.priceBs.toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                  {item.name}
+                </h2>
+                <p className="font-sans text-sm text-neutral-600 font-light mt-2 leading-relaxed">
+                  {item.desc}
+                </p>
 
+                {/* Especificaciones */}
+                <dl className="grid grid-cols-2 gap-3 font-mono text-xs uppercase tracking-wider border-t border-black/10 pt-4 mt-5">
+                  <div>
+                    <dt className="text-neutral-400 text-[10px]">Capacidad</dt>
+                    <dd className="text-[#111111] font-semibold mt-0.5">{item.capacity}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-neutral-400 text-[10px]">Medidas</dt>
+                    <dd className="text-[#111111] font-semibold mt-0.5">{item.dimensions}</dd>
+                  </div>
+                  <div className="col-span-2">
+                    <dt className="text-neutral-400 text-[10px]">Material</dt>
+                    <dd className="text-[#111111] font-medium truncate mt-0.5">{item.materials}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              {/* Precio y Botón de Compra */}
+              <div className="pt-6 border-t border-black/10 mt-6 flex items-center justify-between gap-4">
+                <div>
+                  <span className="font-mono text-[10px] uppercase text-neutral-400 tracking-wider block">
+                    Precio final
+                  </span>
+                  <span className="font-mono text-xl sm:text-2xl font-bold text-[#111111]">
+                    Bs. {item.priceBs}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleAddToCart(item)}
+                    className="px-5 py-2.5 bg-black text-white font-mono text-xs uppercase tracking-wider font-bold hover:bg-neutral-800 transition-colors cursor-pointer flex items-center gap-2"
+                  >
+                    <ShoppingCart className="w-3.5 h-3.5" />
+                    <HoverRollText text="Pedir / Agregar" rollClassName="italic text-white" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
       </div>
-    </main>
+
+      {/* BLOQUE DE PEDIDO A MEDIDA */}
+      <section className="w-full border-t border-black/15 bg-white py-14 sm:py-20 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-[1520px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+          <div>
+            <h3 className="font-serif text-2xl sm:text-3xl font-normal text-[#111111]">
+              ¿Necesitas un rack a medida para tu espacio?
+            </h3>
+            <p className="font-sans text-sm sm:text-base text-neutral-600 font-light mt-1 max-w-xl">
+              Diseñamos y fabricamos muebles personalizados según las dimensiones exactas de tu sala, número de vinilos y componentes de tu equipo de sonido.
+            </p>
+          </div>
+
+          <a
+            href="https://wa.me/59168610314?text=Hola,%20quisiera%20consultar%20por%20un%20rack%20a%20medida%20para%20mis%20vinilos."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3.5 bg-black text-white font-mono text-xs uppercase tracking-widest font-bold hover:bg-neutral-800 transition-colors flex items-center gap-2.5 shrink-0"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span>Consultar Mueble Personalizado</span>
+          </a>
+        </div>
+      </section>
+    </div>
   );
 }

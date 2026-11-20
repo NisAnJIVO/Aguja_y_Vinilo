@@ -11,7 +11,6 @@ import { ScrambleText } from "@/components/ui/ScrambleText";
 interface CategoryCard {
   id: string;
   index: string;
-  categoryTag: string;
   title: string;
   description: string;
   image: string;
@@ -24,80 +23,69 @@ const CATEGORIES: CategoryCard[] = [
   {
     id: "cat-discos",
     index: "01",
-    categoryTag: "01 // ARCHIVO PRINCIPAL",
-    title: "DISCOS DE VINILO",
+    title: "Discos de Vinilo",
     description:
-      "Catálogo curado de prensados audiófilos de 180 gramos, ediciones especiales en vinilo virgen, clásicos legendarios y joyas contemporáneas de colección.",
+      "Ediciones originales, prensados en vinilo virgen de 180 gramos y reediciones audiófilas de colección seleccionadas para disfrutar la música en su formato más auténtico.",
     image: "/img/discos/oasis-definitely-maybe.jpg",
     href: "/discos",
-    ctaText: "EXPLORAR DISCOS",
+    ctaText: "Explorar Discos",
     specs: [
-      { label: "PRENSADO", value: "180G VIRGIN VINYL" },
-      { label: "VELOCIDAD", value: "33 ⅓ & 45 RPM" },
-      { label: "CURATORÍA", value: "ALTA FIDELIDAD" },
-      { label: "ESTADO", value: "SELLADOS & NUEVOS" },
+      { label: "Prensado", value: "180g Vinilo Virgen" },
+      { label: "Velocidades", value: "33 ⅓ y 45 RPM" },
+      { label: "Curaduría", value: "Nuevos y Sellados" },
+      { label: "Envíos", value: "Todo el país" },
     ],
   },
   {
     id: "cat-tocadiscos",
     index: "02",
-    categoryTag: "02 // HARDWARE ANALÓGICO",
-    title: "TOCADISCOS HI-FI",
+    title: "Tocadiscos",
     description:
-      "Reproductores de sonido de alta fidelidad con cápsulas magnéticas Audio-Technica, calibración audiófila y componentes aislados contra resonancias mecánicas.",
+      "Tornamesas de alta fidelidad con cápsulas magnéticas Audio-Technica, calibración precisa y diseño pensado para extraer hasta el último matiz sonoro del surco.",
     image: "/img/Tocadiscos/1.jpg",
     href: "/tocadiscos",
-    ctaText: "VER TOCADISCOS",
+    ctaText: "Ver Tocadiscos",
     specs: [
-      { label: "TRACCIÓN", value: "BELT / DIRECT DRIVE" },
-      { label: "CÁPSULA", value: "AUDIO-TECHNICA MM" },
-      { label: "CONECTIVIDAD", value: "PHONO / LINE PREAMP" },
-      { label: "GARANTÍA", value: "1 AÑO OFICIAL" },
+      { label: "Tracción", value: "Correa y Directa" },
+      { label: "Cápsula", value: "Audio-Technica MM" },
+      { label: "Preamp", value: "Phono / Línea" },
+      { label: "Garantía", value: "1 Año Oficial" },
     ],
   },
   {
     id: "cat-racks",
     index: "03",
-    categoryTag: "03 // MOBILIARIO MODULAR",
-    title: "RACKS PARA VINILOS",
+    title: "Racks y Muebles",
     description:
-      "Mobiliario especializado en madera noble y herrería estructural diseñado para almacenar y organizar tu colección con rigidez acústica superior.",
+      "Mobiliario especializado en madera noble y herrería estructural, fabricado artesanalmente para organizar y proteger tu colección con firmeza acústica.",
     image: "/img/Muebles/1.jpg",
     href: "/racks",
-    ctaText: "EXPLORAR RACKS",
+    ctaText: "Ver Racks",
     specs: [
-      { label: "CAPACIDAD", value: "80 HASTA 450 LPS" },
-      { label: "MATERIAL", value: "MADERA NOBLE & HIERRO" },
-      { label: "ESTABILIDAD", value: "ANTIVIBRATORIA" },
-      { label: "ORIGEN", value: "HECHO A MANO EN BOLIVIA" },
+      { label: "Capacidad", value: "80 a 450 vinilos" },
+      { label: "Materiales", value: "Madera maciza y hierro" },
+      { label: "Estructura", value: "Antivibratoria" },
+      { label: "Origen", value: "Hecho a mano en Bolivia" },
     ],
   },
   {
     id: "cat-extras",
     index: "04",
-    categoryTag: "04 // ACCESORIOS & MERCH",
-    title: "EXTRAS & COSMOS",
+    title: "Extras y Cuidado",
     description:
-      "Fundas antiestáticas de precisión, cepillos de fibra de carbono para mantenimiento, poleras serigrafiadas y merchandising oficial para amantes del formato físico.",
+      "Fundas protectoras antiestáticas, cepillos de fibra de carbono para mantenimiento diario, indumentaria serigrafiada y accesorios esenciales para tus discos.",
     image: "/img/extras/1.jpg",
     href: "/extras",
-    ctaText: "VER ACCESORIOS",
+    ctaText: "Ver Accesorios",
     specs: [
-      { label: "PROTECCIÓN", value: "FUNDAS POLIPROPILENO" },
-      { label: "LIMPIEZA", value: "CEPILLOS CONDUCTIVOS" },
-      { label: "TEXTIL", value: "100% ALGODÓN 240G" },
-      { label: "EDICIÓN", value: "LIMITADA AGUJA & VINILO" },
+      { label: "Protección", value: "Fundas antiestáticas" },
+      { label: "Mantenimiento", value: "Cepillos conductivos" },
+      { label: "Prendas", value: "100% Algodón 240g" },
+      { label: "Disponibilidad", value: "Inmediata" },
     ],
   },
 ];
 
-/**
- * Sección de Categorías Destacadas inspirada en Basement Studio Featured Projects.
- * Tarjetas apiladas con GSAP ScrollTrigger:
- * - Desktop: sticky top-[72px], mientras la siguiente tarjeta entra, la anterior se encoge (scale: 0.92)
- *   y oscurece (brightness: 0.4) con scrub: true.
- * - Mobile: scroll vertical limpio sin pinning ni transformaciones.
- */
 export const StackedCategories: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -107,19 +95,17 @@ export const StackedCategories: React.FC = () => {
 
     const mm = gsap.matchMedia();
 
-    // Solo para escritorio (ancho >= 768px)
+    // Solo en desktop: escala sutil de 1 a 0.96 sin oscurecimiento
     mm.add("(min-width: 768px)", () => {
       const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[];
       if (cards.length === 0) return;
 
       cards.forEach((card, i) => {
-        // Todas las tarjetas menos la última sufren el efecto de profundidad al superponerse la siguiente
         if (i < cards.length - 1) {
           const nextCard = cards[i + 1];
 
           gsap.to(card, {
-            scale: 0.92,
-            filter: "brightness(0.4)",
+            scale: 0.96,
             ease: "none",
             transformOrigin: "center top",
             scrollTrigger: {
@@ -142,26 +128,26 @@ export const StackedCategories: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="w-full bg-[#EDEDED] py-14 sm:py-20 px-4 sm:px-6 lg:px-8 border-b border-black select-none"
+      className="w-full bg-[#F6F6F6] py-16 sm:py-24 px-4 sm:px-6 lg:px-8 border-b border-black/10 select-none"
     >
-      {/* Encabezado Brutalista de la Sección */}
-      <div className="w-full max-w-[1520px] mx-auto mb-8 sm:mb-12">
-        <div className="border-b border-black/25 pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+      {/* Encabezado limpio y directo */}
+      <div className="w-full max-w-[1520px] mx-auto mb-10 sm:mb-14">
+        <div className="border-b border-black/15 pb-4 flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
-            <span className="font-mono text-xs uppercase tracking-widest text-neutral-500 block mb-1">
-              [ 02 // SECCIONES ESPECIALIZADAS ]
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-black">
-              CATEGORÍAS DESTACADAS
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-[#111111]">
+              Categorías
             </h2>
+            <p className="font-sans text-sm sm:text-base text-neutral-600 mt-1 font-light">
+              Discos de vinilo, tocadiscos de alta fidelidad, racks artesanales y cuidado analógico.
+            </p>
           </div>
           <span className="font-mono text-xs text-neutral-500 uppercase tracking-wider">
-            BASEMENT STUDIO ARCHITECTURE // 4 COLECCIONES
+            Colección Oficial • Bolivia
           </span>
         </div>
       </div>
 
-      {/* Contenedor de Tarjetas Apiladas (Sticky en Desktop, Flujo Normal en Móvil) */}
+      {/* Tarjetas apiladas con fondo claro y bordes finos */}
       <div className="w-full max-w-[1520px] mx-auto relative flex flex-col gap-8 md:gap-0">
         {CATEGORIES.map((cat, index) => (
           <div
@@ -170,53 +156,53 @@ export const StackedCategories: React.FC = () => {
               cardsRef.current[index] = el;
             }}
             style={{ zIndex: index + 10 }}
-            className="card-item relative md:sticky md:top-[72px] w-full min-h-[auto] md:min-h-[85vh] bg-[#0A0A0A] text-white border border-white/20 rounded-none overflow-hidden flex flex-col justify-between p-6 sm:p-10 lg:p-12 shadow-[0_20px_60px_rgba(0,0,0,0.6)] mb-0 md:mb-[15vh] last:md:mb-0 will-change-transform"
+            className="card-item relative md:sticky md:top-[72px] w-full min-h-[auto] md:min-h-[80vh] bg-white text-[#111111] border border-black/10 rounded-none overflow-hidden flex flex-col justify-between p-6 sm:p-10 lg:p-12 shadow-[0_15px_40px_rgba(0,0,0,0.06)] mb-0 md:mb-[12vh] last:md:mb-0 will-change-transform"
           >
-            {/* Barra Superior de la Tarjeta */}
-            <div className="flex items-start justify-between border-b border-white/15 pb-4 sm:pb-6">
-              <div className="flex flex-col gap-1">
-                <span className="font-mono text-xs uppercase tracking-widest text-neutral-400 font-bold">
-                  {cat.categoryTag}
+            {/* Barra superior de la tarjeta */}
+            <div className="flex items-start justify-between border-b border-black/10 pb-4 sm:pb-6">
+              <div className="flex flex-col">
+                <span className="font-mono text-xs uppercase tracking-wider text-neutral-500 font-medium">
+                  Sección {cat.index}
                 </span>
-                <span className="font-mono text-[10px] text-neutral-500 uppercase tracking-wider hidden sm:block">
-                  FORMATO FÍSICO // AGUJA &amp; VINILO • BOLIVIA
+                <span className="font-sans text-xs text-neutral-400">
+                  Aguja &amp; Vinilo
                 </span>
               </div>
 
-              {/* Índice numérico gigante en la esquina */}
-              <div className="font-mono font-black text-6xl sm:text-8xl md:text-9xl leading-none tracking-tighter text-white/20 select-none">
+              {/* Índice numérico gigante pero sutil */}
+              <div className="font-mono font-black text-6xl sm:text-8xl md:text-9xl leading-none tracking-tighter text-black/10 select-none">
                 {cat.index}
               </div>
             </div>
 
-            {/* Contenido Central: Grilla 2 Columnas */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center my-6 sm:my-auto">
-              {/* Columna Izquierda: Información Editorial */}
+            {/* Contenido central: Grilla 2 columnas */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center my-6 sm:my-auto">
+              {/* Información editorial */}
               <div className="lg:col-span-6 flex flex-col text-left">
-                <h3 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-white uppercase tracking-tight leading-tight">
+                <h3 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal text-[#111111] tracking-tight leading-tight">
                   {cat.title}
                 </h3>
-                <p className="font-sans text-neutral-300 text-sm sm:text-base font-light leading-relaxed mt-4 max-w-xl">
+                <p className="font-sans text-neutral-600 text-sm sm:text-base font-light leading-relaxed mt-4 max-w-xl">
                   {cat.description}
                 </p>
 
-                {/* Metadata técnica en la esquina inferior */}
-                <div className="grid grid-cols-2 gap-3 font-mono text-[11px] uppercase tracking-wider border-t border-white/15 pt-4 mt-6">
+                {/* Ficha técnica clara */}
+                <div className="grid grid-cols-2 gap-4 font-mono text-[11px] uppercase tracking-wider border-t border-black/10 pt-5 mt-6">
                   {cat.specs.map((sp, idx) => (
                     <div key={idx} className="flex flex-col">
-                      <span className="text-neutral-500 text-[10px]">{sp.label}</span>
-                      <span className="text-neutral-200 font-medium truncate">{sp.value}</span>
+                      <span className="text-neutral-400 text-[10px]">{sp.label}</span>
+                      <span className="text-[#111111] font-semibold truncate">{sp.value}</span>
                     </div>
                   ))}
                 </div>
 
-                {/* Botón CTA Magnético con Scramble */}
+                {/* Botón CTA */}
                 <div className="pt-6">
                   <MagneticButton>
                     <Link
                       href={cat.href}
                       data-cursor="VER"
-                      className="inline-flex items-center gap-3 px-6 py-3.5 bg-white text-black font-mono text-xs font-bold uppercase tracking-widest hover:bg-neutral-200 transition-colors rounded-none shadow-md"
+                      className="inline-flex items-center gap-3 px-6 py-3.5 bg-black text-white font-mono text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors rounded-none shadow-sm"
                     >
                       <ScrambleText text={cat.ctaText} />
                       <span aria-hidden="true">&rarr;</span>
@@ -225,29 +211,25 @@ export const StackedCategories: React.FC = () => {
                 </div>
               </div>
 
-              {/* Columna Derecha: Gran Imagen Editorial con Borde Fino */}
+              {/* Imagen editorial */}
               <div className="lg:col-span-6 w-full">
-                <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-neutral-900 border border-white/20 rounded-none overflow-hidden group/img shadow-2xl">
+                <div className="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-[#EEEEEE] border border-black/10 rounded-none overflow-hidden group/img shadow-sm">
                   <Image
                     src={cat.image}
                     alt={cat.title}
                     fill
                     unoptimized
                     sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover group-hover/img:scale-105 transition-transform duration-700 ease-out"
+                    className="object-cover group-hover/img:scale-104 transition-transform duration-500 ease-out"
                   />
-                  {/* Etiqueta técnica sobre la imagen */}
-                  <div className="absolute bottom-3 left-3 bg-black/85 backdrop-blur-xs font-mono text-[10px] text-white px-2.5 py-1 uppercase tracking-wider border border-white/20 select-none">
-                    FIG. {cat.index} // ARCHIVAL REPRODUCTION
-                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Barra Inferior de la Tarjeta */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-t border-white/15 pt-4 font-mono text-[10px] sm:text-[11px] text-neutral-500 uppercase tracking-widest gap-1">
-              <span>AGUJA &amp; VINILO • RED NACIONAL BOLIVIA</span>
-              <span>180G HIGH FIDELITY PRESSINGS // SYS_ID: {cat.id.toUpperCase()}</span>
+            {/* Barra inferior */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-t border-black/10 pt-4 font-mono text-[11px] text-neutral-500 tracking-wider gap-1">
+              <span>Aguja &amp; Vinilo • Tienda Especializada</span>
+              <span>Envíos seguros a los 9 departamentos</span>
             </div>
           </div>
         ))}
