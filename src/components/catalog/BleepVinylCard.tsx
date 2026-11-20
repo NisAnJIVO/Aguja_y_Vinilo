@@ -5,6 +5,9 @@ import Image from "next/image";
 import { DiscoItem } from "@/data/discosData";
 import { useProductModalStore } from "@/store/productModalStore";
 import { useLanguage } from "@/context/LanguageContext";
+import { useCartStore } from "@/store/cartStore";
+import { useToastStore } from "@/store/toastStore";
+import { Plus } from "lucide-react";
 
 interface BleepVinylCardProps {
   item: DiscoItem;
@@ -14,6 +17,8 @@ export const BleepVinylCard: React.FC<BleepVinylCardProps> = ({ item }) => {
   const [imageError, setImageError] = useState(false);
   const { openModal } = useProductModalStore();
   const { language } = useLanguage();
+  const { addItem } = useCartStore();
+  const { showToast } = useToastStore();
 
   const isEn = language === "en";
 
@@ -36,12 +41,28 @@ export const BleepVinylCard: React.FC<BleepVinylCardProps> = ({ item }) => {
     });
   };
 
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addItem(
+      {
+        id: item.id,
+        type: "vinyl",
+        title: item.title,
+        subtitle: item.artist,
+        priceBs: item.priceBs,
+        imageOrCover: imageError ? fallbackImage : item.coverImage,
+      },
+      1
+    );
+    showToast(item.title);
+  };
+
   return (
     <div
       onClick={handleOpenModal}
-      className="flex flex-col select-none cursor-pointer group transition-transform duration-200 hover:-translate-y-0.5"
+      className="vinyl-grid-card flex flex-col select-none cursor-pointer group transition-all duration-200 group-hover/grid:opacity-45 hover:!opacity-100"
     >
-      {/* Portada Cuadrada Limpia 1:1 */}
+      {/* Portada Cuadrada Limpia 1:1 con Zoom Seco (scale 1.05) y Botón Deslizante */}
       <div className="relative w-full aspect-square bg-[#E0E0E0] overflow-hidden shadow-sm border border-black/5 group-hover:shadow-md transition-shadow">
         <Image
           src={imageError ? fallbackImage : item.coverImage}
@@ -49,9 +70,19 @@ export const BleepVinylCard: React.FC<BleepVinylCardProps> = ({ item }) => {
           fill
           unoptimized
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 15vw"
-          className="object-cover group-hover:scale-[1.03] transition-transform duration-300"
+          className="object-cover group-hover:scale-105 transition-transform duration-200 ease-out"
           onError={() => setImageError(true)}
         />
+
+        {/* Botón AGREGAR AL CARRITO deslizándose desde el borde inferior sin bordes redondeados */}
+        <button
+          type="button"
+          onClick={handleAddToCart}
+          className="absolute inset-x-0 bottom-0 bg-black text-white font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider py-2.5 px-2 flex items-center justify-center gap-1.5 transition-transform duration-200 ease-out translate-y-full group-hover:translate-y-0 rounded-none border-t border-white/20 hover:bg-neutral-900 active:bg-neutral-800 z-10 cursor-pointer shadow-lg"
+        >
+          <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+          <span>{isEn ? "Add to Cart" : "Agregar al Carrito"}</span>
+        </button>
       </div>
 
       {/* Metadatos Claros: Artista, Álbum, Formato y Precio únicamente en Bs */}
