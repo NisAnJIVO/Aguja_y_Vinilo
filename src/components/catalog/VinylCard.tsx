@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useProductModalStore } from "@/store/productModalStore";
+import { TiltCard } from "@/components/ui/TiltCard";
 
 export interface VinylCardProps {
   id: string;
@@ -55,21 +56,23 @@ export const VinylCard: React.FC<VinylCardProps> = ({
   };
 
   return (
-    <div
+    <TiltCard
       onClick={handleOpenModal}
       data-cursor="VER"
       className="group flex flex-col select-none cursor-pointer transition-transform duration-200 hover:-translate-y-0.5"
     >
-      {/* Vinyl Cover Artwork - Clean, without hover effects */}
-      <div className="relative w-full aspect-square overflow-hidden bg-[#EEEEEE] shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-opacity duration-200 group-hover:opacity-95">
+      {/* Vinyl Cover Artwork con Borde Técnico Iluminado y Filtro Bürocratik */}
+      <div className="relative w-full aspect-square overflow-hidden bg-[#EEEEEE] border border-black/10 group-hover:border-black/50 group-hover:shadow-[0_0_15px_rgba(0,0,0,0.12)] transition-all duration-200 shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
         <Image
           src={displayImage}
           alt={`${artist} - ${title}`}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover"
+          className="object-cover saturate-75 contrast-110 group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105 group-hover:scale-105 transition-[filter,transform] duration-200 ease-out"
           onError={() => setImageError(true)}
         />
+        {/* Destello de contraste sutil tipo Bürocratik */}
+        <div className="absolute inset-0 bg-white/20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 mix-blend-overlay" />
       </div>
 
       {/* METADATA BLOCK: Exactly as in The Vinyl Factory screenshot */}
@@ -86,6 +89,6 @@ export const VinylCard: React.FC<VinylCardProps> = ({
           {formattedPrice}
         </p>
       </div>
-    </div>
+    </TiltCard>
   );
 };

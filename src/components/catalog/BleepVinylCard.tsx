@@ -9,6 +9,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
 import { Plus } from "lucide-react";
 import { ScrambleText } from "@/components/ui/ScrambleText";
+import { TiltCard } from "@/components/ui/TiltCard";
 
 interface BleepVinylCardProps {
   item: DiscoItem;
@@ -59,22 +60,25 @@ export const BleepVinylCard: React.FC<BleepVinylCardProps> = ({ item }) => {
   };
 
   return (
-    <div
+    <TiltCard
       onClick={handleOpenModal}
       data-cursor="VER"
       className="vinyl-grid-card flex flex-col select-none cursor-pointer group transition-all duration-200 group-hover/grid:opacity-45 hover:!opacity-100"
     >
-      {/* Portada Cuadrada Limpia 1:1 con Zoom Seco (scale 1.05) y Botón Deslizante */}
-      <div className="relative w-full aspect-square bg-[#E0E0E0] overflow-hidden shadow-sm border border-black/5 group-hover:shadow-md transition-shadow">
+      {/* Portada Cuadrada Limpia 1:1 con Zoom Seco (scale 1.05), Borde Técnico Iluminado y Filtro Desaturado */}
+      <div className="relative w-full aspect-square bg-[#E0E0E0] overflow-hidden border border-black/10 group-hover:border-black/50 group-hover:shadow-[0_0_15px_rgba(0,0,0,0.12)] transition-all duration-200">
         <Image
           src={imageError ? fallbackImage : item.coverImage}
           alt={`${item.artist} - ${item.title}`}
           fill
           unoptimized
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 15vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-200 ease-out"
+          className="object-cover saturate-75 contrast-110 group-hover:saturate-100 group-hover:contrast-100 group-hover:brightness-105 group-hover:scale-105 transition-[filter,transform] duration-200 ease-out"
           onError={() => setImageError(true)}
         />
+
+        {/* Destello de contraste sutil tipo Bürocratik */}
+        <div className="absolute inset-0 bg-white/20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-100 mix-blend-overlay" />
 
         {/* Botón AGREGAR AL CARRITO deslizándose desde el borde inferior sin bordes redondeados */}
         <button
@@ -110,6 +114,6 @@ export const BleepVinylCard: React.FC<BleepVinylCardProps> = ({ item }) => {
           Bs. {item.priceBs}
         </p>
       </div>
-    </div>
+    </TiltCard>
   );
 };

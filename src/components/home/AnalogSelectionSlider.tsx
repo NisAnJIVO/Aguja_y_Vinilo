@@ -205,7 +205,7 @@ export const AnalogSelectionSlider: React.FC = () => {
                 onMouseEnter={() => setHoveredCardId(item.id)}
                 onMouseLeave={() => setHoveredCardId(null)}
                 data-cursor="VER"
-                className={`relative shrink-0 w-[260px] sm:w-[310px] md:w-[350px] aspect-[3/4] bg-[#121212] border border-white/20 select-none overflow-hidden transition-all duration-200 group/item ${
+                className={`relative shrink-0 w-[260px] sm:w-[310px] md:w-[350px] aspect-[3/4] bg-[#121212] border border-white/20 group-hover/item:border-white/60 group-hover/item:shadow-[0_0_25px_rgba(255,255,255,0.15)] select-none overflow-hidden transition-all duration-200 group/item ${
                   isThisHovered
                     ? "!opacity-100 !scale-105 z-20 shadow-[0_20px_50px_rgba(0,0,0,0.8)]"
                     : isAnyOtherHovered
@@ -214,7 +214,7 @@ export const AnalogSelectionSlider: React.FC = () => {
                 }`}
                 style={{ willChange: "transform, opacity" }}
               >
-                {/* Portada Editorial */}
+                {/* Portada Editorial con Filtro Bürocratik */}
                 <div className="relative w-full h-full overflow-hidden">
                   <Image
                     src={item.coverImage}
@@ -222,8 +222,11 @@ export const AnalogSelectionSlider: React.FC = () => {
                     fill
                     unoptimized
                     sizes="(max-width: 768px) 80vw, 350px"
-                    className="object-cover group-hover/item:scale-105 transition-transform duration-500 ease-out"
+                    className="object-cover saturate-75 contrast-110 group-hover/item:saturate-100 group-hover/item:contrast-100 group-hover/item:brightness-105 group-hover/item:scale-105 transition-[filter,transform] duration-200 ease-out"
                   />
+                  {/* Destello de contraste rápido tipo Bürocratik */}
+                  <div className="absolute inset-0 bg-white/20 pointer-events-none opacity-0 group-hover/item:opacity-100 transition-opacity duration-100 mix-blend-overlay" />
+
                   {/* Etiqueta superior minimalista */}
                   <div className="absolute top-3 left-3 bg-black/85 backdrop-blur-xs font-mono text-[9px] text-white px-2 py-0.5 uppercase tracking-wider border border-white/20">
                     N° {String(index + 1).padStart(2, "0")} // ARCHIVE
