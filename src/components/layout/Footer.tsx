@@ -11,7 +11,7 @@ export const Footer: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
 
   return (
-    <footer className="relative w-full bg-black text-white overflow-hidden">
+    <footer className="relative lg:fixed lg:bottom-0 lg:left-0 lg:right-0 lg:z-0 lg:h-[500px] w-full bg-black text-white overflow-hidden flex flex-col justify-between">
       {/* Fondo con suspiria1.png anclado arriba (object-top), cortando la parte inferior desocupada */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none">
         <Image
@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* Contenido Completo del Footer */}
-      <div className="relative z-10 w-full max-w-[1520px] mx-auto px-4 sm:px-12 lg:px-16 pt-10 sm:pt-16 pb-8 sm:pb-12">
+      <div className="relative z-10 w-full max-w-[1520px] mx-auto px-4 sm:px-12 lg:px-16 pt-10 sm:pt-14 pb-8 sm:pb-10 flex-1 flex flex-col justify-between">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
           
           {/* LEFT: Mascota al lado del Título Grande + Manifiesto */}

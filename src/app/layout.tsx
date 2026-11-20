@@ -84,11 +84,13 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="min-h-screen flex flex-col bg-white text-[#111111] font-sans selection:bg-black selection:text-white">
+      <body className="min-h-screen flex flex-col bg-[#0A0A0A] text-[#111111] font-sans selection:bg-black selection:text-white">
         <LanguageProvider>
           <SmoothScrollProvider>
             <Navbar />
-            <main className="flex-1 w-full bg-white">{children}</main>
+            <main className="relative z-10 flex-1 w-full bg-[#0E0E0E] lg:mb-[500px] shadow-[0_30px_70px_rgba(0,0,0,0.55)]">
+              {children}
+            </main>
             <Footer />
             <GlobalProductModal />
             <FloatingWhatsAppTab />
