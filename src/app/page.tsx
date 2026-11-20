@@ -13,6 +13,7 @@ import { InitialPreloader } from "@/components/home/InitialPreloader";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { StackedCategories } from "@/components/home/StackedCategories";
 import { AnalogSelectionSlider } from "@/components/home/AnalogSelectionSlider";
+import { ScrollProgressiveText } from "@/components/ui/ScrollProgressiveText";
 
 // First 3x2 collection: Éxitos de la semana
 const FEATURED_RECORDS: VinylCardProps[] = [
@@ -230,9 +231,15 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <div className="lg:col-span-7 space-y-4 text-sm sm:text-base text-neutral-700 leading-relaxed font-light">
-                <p>{t.homeManifesto.p1}</p>
-                <p>{t.homeManifesto.p2}</p>
+              <div className="lg:col-span-7 space-y-5 text-base sm:text-lg lg:text-xl text-black leading-relaxed font-normal">
+                <ScrollProgressiveText
+                  text={t.homeManifesto.p1}
+                  className="font-sans text-neutral-900 leading-relaxed font-normal"
+                />
+                <ScrollProgressiveText
+                  text={t.homeManifesto.p2}
+                  className="font-sans text-neutral-800 leading-relaxed font-light text-sm sm:text-base lg:text-lg"
+                />
                 <div className="pt-3">
                   <MagneticButton>
                     <Link
