@@ -12,6 +12,7 @@ import { VelocityMarquee } from "@/components/home/VelocityMarquee";
 import { InitialPreloader } from "@/components/home/InitialPreloader";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { StackedCategories } from "@/components/home/StackedCategories";
+import { AnalogSelectionSlider } from "@/components/home/AnalogSelectionSlider";
 
 // First 3x2 collection: Éxitos de la semana
 const FEATURED_RECORDS: VinylCardProps[] = [
@@ -208,6 +209,11 @@ export default function HomePage() {
           Sube deslizándose DIRECTAMENTE por encima del banner anterior, tapándolo.
          ========================================================================= */}
       <div className="relative z-20 bg-white shadow-[0_-20px_45px_rgba(0,0,0,0.25)]">
+        {/* =========================================================================
+            SELECCIÓN ANALÓGICA: CARRUSEL HORIZONTAL INTERACTIVO (ARISTIDE BENOIST)
+           ========================================================================= */}
+        <AnalogSelectionSlider />
+
         <section className="w-full bg-white py-12 sm:py-24 px-4 sm:px-12 lg:px-16">
           <div className="w-full max-w-[1520px] mx-auto">
             
