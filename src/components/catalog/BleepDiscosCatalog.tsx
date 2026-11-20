@@ -4,9 +4,10 @@ import React, { useMemo, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { DISCOS_CATALOG } from "@/data/discosData";
 import { BleepVinylCard } from "./BleepVinylCard";
+import { DiscosListView } from "./DiscosListView";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSearchStore } from "@/store/searchStore";
-import { X } from "lucide-react";
+import { X, LayoutGrid, List } from "lucide-react";
 
 export const BleepDiscosCatalog: React.FC = () => {
   const router = useRouter();
@@ -14,6 +15,7 @@ export const BleepDiscosCatalog: React.FC = () => {
   const { t } = useLanguage();
   const { searchQuery, clearSearch } = useSearchStore();
 
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -59,16 +61,51 @@ export const BleepDiscosCatalog: React.FC = () => {
               {t.discos.subtitle}
             </span>
           </div>
-          {mounted && q && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded font-mono text-xs uppercase tracking-wider hover:bg-neutral-800 transition-colors w-fit cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5" />
-              <span>{t.discos.clearFilter}</span>
-            </button>
-          )}
+
+          <div className="flex flex-wrap items-center gap-3">
+            {mounted && q && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black text-white rounded font-mono text-xs uppercase tracking-wider hover:bg-neutral-800 transition-colors cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>{t.discos.clearFilter}</span>
+              </button>
+            )}
+
+            {/* SELECTOR BRUTALISTA DE VISTA: GRILLA / LISTA */}
+            <div className="inline-flex items-center border border-black p-0.5 bg-white shadow-xs">
+              <button
+                type="button"
+                onClick={() => setViewMode("grid")}
+                aria-label="Vista Grilla"
+                className={`px-3 py-1.5 font-mono text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer ${
+                  viewMode === "grid"
+                    ? "bg-black text-white font-semibold"
+                    : "text-neutral-700 hover:text-black hover:bg-neutral-100"
+                }`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">VISTA GRILLA</span>
+                <span className="sm:hidden">GRILLA</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("list")}
+                aria-label="Vista Lista"
+                className={`px-3 py-1.5 font-mono text-xs uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer ${
+                  viewMode === "list"
+                    ? "bg-black text-white font-semibold"
+                    : "text-neutral-700 hover:text-black hover:bg-neutral-100"
+                }`}
+              >
+                <List className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">VISTA LISTA</span>
+                <span className="sm:hidden">LISTA</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {mounted && q ? (
@@ -103,12 +140,14 @@ export const BleepDiscosCatalog: React.FC = () => {
                   {t.discos.clearFilter}
                 </button>
               </div>
-            ) : (
+            ) : viewMode === "grid" ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-x-3.5 sm:gap-x-4 lg:gap-x-5 gap-y-8 sm:gap-y-10">
                 {filteredDiscos.map((item) => (
                   <BleepVinylCard key={item.id} item={item} />
                 ))}
               </div>
+            ) : (
+              <DiscosListView items={filteredDiscos} />
             )}
           </div>
         ) : (
@@ -123,11 +162,15 @@ export const BleepDiscosCatalog: React.FC = () => {
                   {t.discos.section1Subtitle}
                 </span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-x-3.5 sm:gap-x-4 lg:gap-x-5 gap-y-8 sm:gap-y-10">
-                {section1.map((item) => (
-                  <BleepVinylCard key={item.id} item={item} />
-                ))}
-              </div>
+              {viewMode === "grid" ? (
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-x-3.5 sm:gap-x-4 lg:gap-x-5 gap-y-8 sm:gap-y-10">
+                  {section1.map((item) => (
+                    <BleepVinylCard key={item.id} item={item} />
+                  ))}
+                </div>
+              ) : (
+                <DiscosListView items={section1} />
+              )}
             </div>
 
             <div className="w-full border-b border-gray-300 my-12 sm:my-16" />
@@ -142,11 +185,15 @@ export const BleepDiscosCatalog: React.FC = () => {
                   {t.discos.section2Subtitle}
                 </span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-x-3.5 sm:gap-x-4 lg:gap-x-5 gap-y-8 sm:gap-y-10">
-                {section2.map((item) => (
-                  <BleepVinylCard key={item.id} item={item} />
-                ))}
-              </div>
+              {viewMode === "grid" ? (
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 xl:grid-cols-8 gap-x-3.5 sm:gap-x-4 lg:gap-x-5 gap-y-8 sm:gap-y-10">
+                  {section2.map((item) => (
+                    <BleepVinylCard key={item.id} item={item} />
+                  ))}
+                </div>
+              ) : (
+                <DiscosListView items={section2} />
+              )}
             </div>
           </>
         )}
