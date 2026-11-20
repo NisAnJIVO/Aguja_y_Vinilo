@@ -7,6 +7,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { EditorialCarousel } from "@/components/home/EditorialCarousel";
 import { VinylCharacter } from "@/components/ui/VinylCharacter";
 import { ScrambleText } from "@/components/ui/ScrambleText";
+import { VelocityMarquee } from "@/components/home/VelocityMarquee";
 
 // First 3x2 collection: Éxitos de la semana
 const FEATURED_RECORDS: VinylCardProps[] = [
@@ -127,6 +128,11 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* =========================================================================
+            SECCIÓN SEPARADORA: MARQUEE INFINITO CON GSAP SCROLLTRIGGER (VELOCIDAD & DIRECCIÓN)
+           ========================================================================= */}
+        <VelocityMarquee />
       </div>
 
       {/* =========================================================================
