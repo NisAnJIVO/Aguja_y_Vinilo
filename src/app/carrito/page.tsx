@@ -20,6 +20,9 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronUp,
+  QrCode,
+  Clock,
+  X,
 } from "lucide-react";
 
 export default function CarritoPage() {
@@ -42,17 +45,36 @@ export default function CarritoPage() {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [metodoPago, setMetodoPago] = useState<"tarjeta" | "qr" | "paypal">("tarjeta");
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [qrCountdown, setQrCountdown] = useState(30);
   const [orderSummary, setOrderSummary] = useState<{
     id: string;
     total: number;
     itemsCount: number;
     ciudad: string;
     isSubscription: boolean;
+    metodoPago?: string;
   } | null>(null);
 
   const [trackingCodeInput, setTrackingCodeInput] = useState("");
   // Cuando hay productos en el carrito, el historial inicia plegado; cuando el carrito está vacío, inicia visible
   const [showHistoryWithItems, setShowHistoryWithItems] = useState(false);
+
+  // Temporizador para el código QR (30 segundos de vigencia oficial)
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showQrModal && qrCountdown > 0) {
+      timer = setTimeout(() => {
+        setQrCountdown((prev) => prev - 1);
+      }, 1000);
+    } else if (showQrModal && qrCountdown === 0) {
+      // Al completarse los 30 segundos, efectúa la confirmación del pago
+      completarOrden("QR Simple");
+      setShowQrModal(false);
+    }
+    return () => clearTimeout(timer);
+  }, [showQrModal, qrCountdown]);
 
   // Scroll inmediato al tope absoluto al mostrar la pantalla de éxito
   React.useEffect(() => {
@@ -116,18 +138,20 @@ export default function CarritoPage() {
       errors.nombreTitular = "Por favor ingresa tu nombre completo";
     }
 
-    const cleanCard = formData.numeroTarjeta.replace(/\D/g, "");
-    if (cleanCard.length < 15) {
-      errors.numeroTarjeta = "Ingresa los 16 dígitos de tu tarjeta";
-    }
+    if (metodoPago === "tarjeta") {
+      const cleanCard = formData.numeroTarjeta.replace(/\D/g, "");
+      if (cleanCard.length < 15) {
+        errors.numeroTarjeta = "Ingresa los 16 dígitos de tu tarjeta";
+      }
 
-    if (!/^\d{2}\/\d{2}$/.test(formData.expiracion.trim())) {
-      errors.expiracion = "Ingresa fecha de vencimiento (MM/AA)";
-    }
+      if (!/^\d{2}\/\d{2}$/.test(formData.expiracion.trim())) {
+        errors.expiracion = "Ingresa fecha de vencimiento (MM/AA)";
+      }
 
-    const cleanCvc = formData.cvc.replace(/\D/g, "");
-    if (cleanCvc.length < 3) {
-      errors.cvc = "Ingresa los 3 dígitos de seguridad";
+      const cleanCvc = formData.cvc.replace(/\D/g, "");
+      if (cleanCvc.length < 3) {
+        errors.cvc = "Ingresa los 3 dígitos de seguridad";
+      }
     }
 
     if (!formData.telefono.trim() || formData.telefono.trim().length < 7) {
@@ -149,6 +173,75 @@ export default function CarritoPage() {
     }
   };
 
+  const completarOrden = (metodoUtilizado: string = metodoPago) => {
+    // Verificar si es exclusivamente suscripción o si incluye productos físicos
+    const subItem = items.find(
+      (i) => i.type === "subscription" || i.id === "sub-miembro-plus"
+    );
+    const isOnlySubscription = Boolean(subItem && items.length === 1);
+
+    // Si incluye suscripción, activar de inmediato la membresía Miembro Plus
+    if (subItem) {
+      subscribe({
+        nombre: formData.nombreTitular || "Coleccionista",
+        ciudad: formData.ciudad,
+        direccion: formData.direccion,
+        telefono: formData.telefono,
+      });
+    }
+
+    // Si es SOLO suscripción, NO genera código de despacho ni paquete con estados de envío
+    let generatedId = "";
+    if (!isOnlySubscription) {
+      const physicalItems = items.filter(
+        (i) => i.type !== "subscription" && i.id !== "sub-miembro-plus"
+      );
+      const savedOrder = addOrder({
+        id: `AV-${Math.floor(100000 + Math.random() * 900000)}`,
+        total: subtotal,
+        itemsCount: physicalItems.reduce((acc, curr) => acc + curr.quantity, 0),
+        ciudad: formData.ciudad,
+        direccion: formData.direccion || "Dirección no especificada",
+        telefono: formData.telefono || "+591 68610314",
+        items: physicalItems.map((i) => ({
+          id: i.id,
+          title: i.title,
+          subtitle: i.subtitle,
+          priceBs: i.priceBs,
+          quantity: i.quantity,
+        })),
+      });
+      generatedId = savedOrder.id;
+    }
+
+    setOrderSummary({
+      id: generatedId,
+      total: subtotal,
+      itemsCount: totalItems,
+      ciudad: formData.ciudad,
+      isSubscription: isOnlySubscription,
+      metodoPago: metodoUtilizado,
+    });
+
+    setIsProcessing(false);
+    setIsSuccess(true);
+    clearCart();
+
+    // Reset de scroll inmediato en el momento del pago
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    if (
+      typeof window !== "undefined" &&
+      (window as unknown as { __lenis?: { scrollTo: (y: number, opts: unknown) => void } }).__lenis
+    ) {
+      (window as unknown as { __lenis?: { scrollTo: (y: number, opts: unknown) => void } }).__lenis?.scrollTo(
+        0,
+        { immediate: true, force: true }
+      );
+    }
+  };
+
   const handlePayment = () => {
     if (items.length === 0) return;
 
@@ -156,75 +249,23 @@ export default function CarritoPage() {
       return;
     }
 
-    setIsProcessing(true);
-
-    setTimeout(() => {
-      // Verificar si es exclusivamente suscripción o si incluye productos físicos
-      const subItem = items.find(
-        (i) => i.type === "subscription" || i.id === "sub-miembro-plus"
-      );
-      const isOnlySubscription = Boolean(subItem && items.length === 1);
-
-      // Si incluye suscripción, activar de inmediato la membresía Miembro Plus
-      if (subItem) {
-        subscribe({
-          nombre: formData.nombreTitular || "Coleccionista",
-          ciudad: formData.ciudad,
-          direccion: formData.direccion,
-          telefono: formData.telefono,
-        });
-      }
-
-      // Si es SOLO suscripción, NO genera código de despacho ni paquete con estados de envío
-      let generatedId = "";
-      if (!isOnlySubscription) {
-        const physicalItems = items.filter(
-          (i) => i.type !== "subscription" && i.id !== "sub-miembro-plus"
-        );
-        const savedOrder = addOrder({
-          id: `AV-${Math.floor(100000 + Math.random() * 900000)}`,
-          total: subtotal,
-          itemsCount: physicalItems.reduce((acc, curr) => acc + curr.quantity, 0),
-          ciudad: formData.ciudad,
-          direccion: formData.direccion || "Dirección no especificada",
-          telefono: formData.telefono || "+591 68610314",
-          items: physicalItems.map((i) => ({
-            id: i.id,
-            title: i.title,
-            subtitle: i.subtitle,
-            priceBs: i.priceBs,
-            quantity: i.quantity,
-          })),
-        });
-        generatedId = savedOrder.id;
-      }
-
-      setOrderSummary({
-        id: generatedId,
-        total: subtotal,
-        itemsCount: totalItems,
-        ciudad: formData.ciudad,
-        isSubscription: isOnlySubscription,
-      });
-
-      setIsProcessing(false);
-      setIsSuccess(true);
-      clearCart();
-
-      // Reset de scroll inmediato en el momento del pago
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-      if (
-        typeof window !== "undefined" &&
-        (window as unknown as { __lenis?: { scrollTo: (y: number, opts: unknown) => void } }).__lenis
-      ) {
-        (window as unknown as { __lenis?: { scrollTo: (y: number, opts: unknown) => void } }).__lenis?.scrollTo(
-          0,
-          { immediate: true, force: true }
-        );
-      }
-    }, 1200);
+    if (metodoPago === "tarjeta") {
+      setIsProcessing(true);
+      setTimeout(() => {
+        completarOrden("Tarjeta Bancaria");
+      }, 1200);
+    } else if (metodoPago === "qr") {
+      setQrCountdown(30);
+      setShowQrModal(true);
+    } else if (metodoPago === "paypal") {
+      setIsProcessing(true);
+      const usdAmount = (subtotal / 6.96).toFixed(2);
+      const paypalUrl = `https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=jivo3534@gmail.com&item_name=Aguja+y+Vinilo+-+Coleccion+de+Vinilos&amount=${usdAmount}&currency_code=USD`;
+      window.open(paypalUrl, "_blank", "noopener,noreferrer");
+      setTimeout(() => {
+        completarOrden("PayPal");
+      }, 1500);
+    }
   };
 
   // =========================================================================
@@ -255,6 +296,10 @@ export default function CarritoPage() {
                 <div className="flex justify-between border-b border-neutral-200/60 pb-2">
                   <span className="text-neutral-500">Mensualidad:</span>
                   <span className="font-bold text-neutral-900">Bs. {orderSummary.total.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-200/60 pb-2">
+                  <span className="text-neutral-500">Método de Pago:</span>
+                  <span className="font-bold text-neutral-900">{orderSummary.metodoPago || "Tarjeta Bancaria"}</span>
                 </div>
                 <div className="flex justify-between border-b border-neutral-200/60 pb-2">
                   <span className="text-neutral-500">Beneficio:</span>
@@ -298,6 +343,10 @@ export default function CarritoPage() {
                 <div className="flex justify-between border-b border-neutral-200/60 pb-2">
                   <span className="text-neutral-500">Total Pagado:</span>
                   <span className="font-bold text-neutral-900">Bs. {orderSummary.total.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-200/60 pb-2">
+                  <span className="text-neutral-500">Método de Pago:</span>
+                  <span className="font-bold text-neutral-900">{orderSummary.metodoPago || "Tarjeta Bancaria"}</span>
                 </div>
                 <div className="flex justify-between border-b border-neutral-200/60 pb-2">
                   <span className="text-neutral-500">Artículos adquiridos:</span>
@@ -696,143 +745,283 @@ export default function CarritoPage() {
 
                 {/* CONTENEDOR DE PAGO (SIN FORM NATIVO, CON ATRIBUTOS NEUTRALES) */}
                 <div className="mt-6 space-y-4">
-                  <div className="flex items-center gap-2 text-xs font-mono uppercase text-neutral-700 tracking-wider font-semibold mb-2">
-                    <CreditCard className="w-4 h-4" /> Datos de Pago Bancario
-                  </div>
-
-                  {/* Titular */}
+                  {/* SELECTOR DE MÉTODO DE PAGO */}
                   <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <label className="text-[11px] font-mono uppercase text-neutral-500">
-                        Titular de la Cuenta
-                      </label>
-                      {formErrors.nombreTitular && (
-                        <span className="text-[10px] font-mono text-red-600">
-                          {formErrors.nombreTitular}
-                        </span>
-                      )}
-                    </div>
-                    <input
-                      type="text"
-                      name="auth_field_alpha"
-                      value={formData.nombreTitular}
-                      onChange={(e) => handleInputChange("nombreTitular", e.target.value)}
-                      onKeyDown={handlePreventEnter}
-                      autoComplete="one-time-code"
-                      autoCorrect="off"
-                      spellCheck={false}
-                      data-lpignore="true"
-                      data-form-type="other"
-                      data-1p-ignore="true"
-                      data-bwignore="true"
-                      data-disable-autofill="true"
-                      placeholder="Nombre y apellido completos"
-                      className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
-                        formErrors.nombreTitular ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
-                      }`}
-                    />
-                  </div>
-
-                  {/* Referencia de Cuenta / Pago */}
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <label className="text-[11px] font-mono uppercase text-neutral-500">
-                        Referencia de Cuenta / Pago
-                      </label>
-                      {formErrors.numeroTarjeta && (
-                        <span className="text-[10px] font-mono text-red-600">
-                          {formErrors.numeroTarjeta}
-                        </span>
-                      )}
-                    </div>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        name="auth_field_num"
-                        value={formData.numeroTarjeta}
-                        onChange={handleCardNumberChange}
-                        onKeyDown={handlePreventEnter}
-                        autoComplete="one-time-code"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        data-lpignore="true"
-                        data-form-type="other"
-                        data-1p-ignore="true"
-                        data-bwignore="true"
-                        data-disable-autofill="true"
-                        maxLength={19}
-                        placeholder="•••• •••• •••• ••••"
-                        className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
-                          formErrors.numeroTarjeta ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
+                    <label className="text-[11px] font-mono uppercase text-neutral-500 block mb-2 font-semibold">
+                      Selecciona Método de Pago
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMetodoPago("tarjeta");
+                          setFormErrors({});
+                        }}
+                        className={`py-2.5 px-2 border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                          metodoPago === "tarjeta"
+                            ? "border-black bg-black text-white shadow-xs"
+                            : "border-neutral-300 bg-neutral-50/60 hover:bg-neutral-100 text-neutral-700"
                         }`}
-                      />
+                      >
+                        <CreditCard className="w-4 h-4" />
+                        <span className="text-[10px] font-mono uppercase font-semibold leading-none">Tarjeta</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMetodoPago("qr");
+                          setFormErrors({});
+                        }}
+                        className={`py-2.5 px-2 border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                          metodoPago === "qr"
+                            ? "border-black bg-black text-white shadow-xs"
+                            : "border-neutral-300 bg-neutral-50/60 hover:bg-neutral-100 text-neutral-700"
+                        }`}
+                      >
+                        <QrCode className="w-4 h-4" />
+                        <span className="text-[10px] font-mono uppercase font-semibold leading-none">QR Simple</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMetodoPago("paypal");
+                          setFormErrors({});
+                        }}
+                        className={`py-2.5 px-2 border text-center transition-all flex flex-col items-center justify-center gap-1.5 cursor-pointer ${
+                          metodoPago === "paypal"
+                            ? "border-black bg-black text-white shadow-xs"
+                            : "border-neutral-300 bg-neutral-50/60 hover:bg-neutral-100 text-neutral-700"
+                        }`}
+                      >
+                        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.305-.03.19-.066.389-.107.595-.918 4.605-4.004 6.84-8.083 6.84H8.847l-1.771 7.787zm9.645-13.88c.026-.164.048-.323.067-.478.435-2.793-.728-4.229-3.468-4.229H7.666L5.597 19.347h2.723l1.178-5.183h2.385c3.21 0 5.632-1.722 6.357-5.327l.006-.03z"/>
+                        </svg>
+                        <span className="text-[10px] font-mono uppercase font-semibold leading-none">PayPal</span>
+                      </button>
                     </div>
                   </div>
 
-                  {/* Vencimiento y Seguridad */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <label className="text-[11px] font-mono uppercase text-neutral-500">
-                          Vigencia (MM/AA)
-                        </label>
-                        {formErrors.expiracion && (
-                          <span className="text-[10px] font-mono text-red-600">
-                            {formErrors.expiracion}
-                          </span>
-                        )}
+                  {/* CAMPOS ESPECÍFICOS SEGÚN MÉTODO */}
+                  {metodoPago === "tarjeta" && (
+                    <>
+                      {/* Titular */}
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="text-[11px] font-mono uppercase text-neutral-500">
+                            Titular de la Tarjeta
+                          </label>
+                          {formErrors.nombreTitular && (
+                            <span className="text-[10px] font-mono text-red-600">
+                              {formErrors.nombreTitular}
+                            </span>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          name="auth_field_alpha"
+                          value={formData.nombreTitular}
+                          onChange={(e) => handleInputChange("nombreTitular", e.target.value)}
+                          onKeyDown={handlePreventEnter}
+                          autoComplete="one-time-code"
+                          autoCorrect="off"
+                          spellCheck={false}
+                          data-lpignore="true"
+                          data-form-type="other"
+                          data-1p-ignore="true"
+                          data-bwignore="true"
+                          data-disable-autofill="true"
+                          placeholder="Nombre y apellido como figura en el plástico"
+                          className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
+                            formErrors.nombreTitular ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
+                          }`}
+                        />
                       </div>
-                      <input
-                        type="text"
-                        name="auth_field_term"
-                        value={formData.expiracion}
-                        onChange={handleExpiryChange}
-                        onKeyDown={handlePreventEnter}
-                        autoComplete="one-time-code"
-                        data-lpignore="true"
-                        data-form-type="other"
-                        data-1p-ignore="true"
-                        data-bwignore="true"
-                        data-disable-autofill="true"
-                        maxLength={5}
-                        placeholder="MM/AA"
-                        className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
-                          formErrors.expiracion ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
-                        }`}
-                      />
-                    </div>
-                    <div>
-                      <div className="flex justify-between items-center mb-1">
-                        <label className="text-[11px] font-mono uppercase text-neutral-500">
-                          Código de Confirmación
-                        </label>
-                        {formErrors.cvc && (
-                          <span className="text-[10px] font-mono text-red-600">
-                            {formErrors.cvc}
-                          </span>
-                        )}
+
+                      {/* Referencia de Cuenta / Pago */}
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="text-[11px] font-mono uppercase text-neutral-500">
+                            Número de Tarjeta
+                          </label>
+                          {formErrors.numeroTarjeta && (
+                            <span className="text-[10px] font-mono text-red-600">
+                              {formErrors.numeroTarjeta}
+                            </span>
+                          )}
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            name="auth_field_num"
+                            value={formData.numeroTarjeta}
+                            onChange={handleCardNumberChange}
+                            onKeyDown={handlePreventEnter}
+                            autoComplete="one-time-code"
+                            autoCorrect="off"
+                            spellCheck={false}
+                            data-lpignore="true"
+                            data-form-type="other"
+                            data-1p-ignore="true"
+                            data-bwignore="true"
+                            data-disable-autofill="true"
+                            maxLength={19}
+                            placeholder="•••• •••• •••• ••••"
+                            className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
+                              formErrors.numeroTarjeta ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
+                            }`}
+                          />
+                        </div>
                       </div>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        name="auth_field_code"
-                        value={formData.cvc}
-                        onChange={handleCvcChange}
-                        onKeyDown={handlePreventEnter}
-                        maxLength={4}
-                        autoComplete="one-time-code"
-                        data-lpignore="true"
-                        data-form-type="other"
-                        data-1p-ignore="true"
-                        data-bwignore="true"
-                        data-disable-autofill="true"
-                        placeholder="•••"
-                        className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
-                          formErrors.cvc ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
-                        }`}
-                      />
+
+                      {/* Vencimiento y Seguridad */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <div className="flex justify-between items-center mb-1">
+                            <label className="text-[11px] font-mono uppercase text-neutral-500">
+                              Vigencia (MM/AA)
+                            </label>
+                            {formErrors.expiracion && (
+                              <span className="text-[10px] font-mono text-red-600">
+                                {formErrors.expiracion}
+                              </span>
+                            )}
+                          </div>
+                          <input
+                            type="text"
+                            name="auth_field_term"
+                            value={formData.expiracion}
+                            onChange={handleExpiryChange}
+                            onKeyDown={handlePreventEnter}
+                            autoComplete="one-time-code"
+                            data-lpignore="true"
+                            data-form-type="other"
+                            data-1p-ignore="true"
+                            data-bwignore="true"
+                            data-disable-autofill="true"
+                            maxLength={5}
+                            placeholder="MM/AA"
+                            className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
+                              formErrors.expiracion ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
+                            }`}
+                          />
+                        </div>
+                        <div>
+                          <div className="flex justify-between items-center mb-1">
+                            <label className="text-[11px] font-mono uppercase text-neutral-500">
+                              CVC / CVV
+                            </label>
+                            {formErrors.cvc && (
+                              <span className="text-[10px] font-mono text-red-600">
+                                {formErrors.cvc}
+                              </span>
+                            )}
+                          </div>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            name="auth_field_code"
+                            value={formData.cvc}
+                            onChange={handleCvcChange}
+                            onKeyDown={handlePreventEnter}
+                            maxLength={4}
+                            autoComplete="one-time-code"
+                            data-lpignore="true"
+                            data-form-type="other"
+                            data-1p-ignore="true"
+                            data-bwignore="true"
+                            data-disable-autofill="true"
+                            placeholder="•••"
+                            className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
+                              formErrors.cvc ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
+                            }`}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {metodoPago === "qr" && (
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="text-[11px] font-mono uppercase text-neutral-500">
+                            Nombre del Pagador / Facturación
+                          </label>
+                          {formErrors.nombreTitular && (
+                            <span className="text-[10px] font-mono text-red-600">
+                              {formErrors.nombreTitular}
+                            </span>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          value={formData.nombreTitular}
+                          onChange={(e) => handleInputChange("nombreTitular", e.target.value)}
+                          onKeyDown={handlePreventEnter}
+                          placeholder="Nombre y apellido completos"
+                          className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
+                            formErrors.nombreTitular ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
+                          }`}
+                        />
+                      </div>
+
+                      <div className="p-3 bg-neutral-50 border border-neutral-200 rounded text-xs font-mono text-neutral-600 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-neutral-900">
+                          <QrCode className="w-4 h-4 text-black" />
+                          <span>Pago Instantáneo QR Simple</span>
+                        </div>
+                        <p className="text-[11px] leading-relaxed text-neutral-500">
+                          Al presionar el botón inferior se generará el código QR oficial interoperable con 30 segundos de vigencia para abonar desde cualquier banco boliviano.
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {metodoPago === "paypal" && (
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between items-center mb-1">
+                          <label className="text-[11px] font-mono uppercase text-neutral-500">
+                            Nombre del Titular de la Cuenta
+                          </label>
+                          {formErrors.nombreTitular && (
+                            <span className="text-[10px] font-mono text-red-600">
+                              {formErrors.nombreTitular}
+                            </span>
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          value={formData.nombreTitular}
+                          onChange={(e) => handleInputChange("nombreTitular", e.target.value)}
+                          onKeyDown={handlePreventEnter}
+                          placeholder="Nombre completo"
+                          className={`w-full bg-white border px-3 py-2 text-xs text-neutral-900 font-mono focus:outline-none ${
+                            formErrors.nombreTitular ? "border-red-500 bg-red-50/20" : "border-neutral-300 focus:border-black"
+                          }`}
+                        />
+                      </div>
+
+                      <div className="p-3 bg-[#003087]/5 border border-[#003087]/20 rounded text-xs font-mono text-neutral-700 space-y-1">
+                        <div className="flex items-center justify-between font-bold text-[#003087]">
+                          <span className="flex items-center gap-1.5">
+                            <svg className="w-4 h-4 fill-[#003087]" viewBox="0 0 24 24">
+                              <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.305-.03.19-.066.389-.107.595-.918 4.605-4.004 6.84-8.083 6.84H8.847l-1.771 7.787zm9.645-13.88c.026-.164.048-.323.067-.478.435-2.793-.728-4.229-3.468-4.229H7.666L5.597 19.347h2.723l1.178-5.183h2.385c3.21 0 5.632-1.722 6.357-5.327l.006-.03z"/>
+                            </svg>
+                            Pasarela PayPal Internacional
+                          </span>
+                          <span className="text-xs font-bold text-neutral-900">
+                            ${(subtotal / 6.96).toFixed(2)} USD
+                          </span>
+                        </div>
+                        <p className="text-[11px] leading-relaxed text-neutral-600">
+                          Serás dirigido de forma segura a la pasarela de cobro oficial de PayPal para autorizar la transacción en USD al cambio oficial referencial.
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Datos de envío */}
                   <div className="pt-2 space-y-3">
@@ -927,22 +1116,38 @@ export default function CarritoPage() {
                     </div>
                   )}
 
-                  {/* Botón Pagar */}
+                  {/* Botón Pagar Dinámico según Método */}
                   <button
                     type="button"
                     onClick={handlePayment}
                     disabled={isProcessing}
-                    className="w-full mt-4 py-3.5 px-4 bg-black hover:bg-neutral-800 disabled:bg-neutral-600 text-white rounded font-mono text-xs sm:text-sm uppercase tracking-wider font-semibold flex items-center justify-center gap-2 transition-all shadow-md active:scale-98 cursor-pointer"
+                    className={`w-full mt-4 py-3.5 px-4 text-white rounded font-mono text-xs sm:text-sm uppercase tracking-wider font-semibold flex items-center justify-center gap-2 transition-all shadow-md active:scale-98 cursor-pointer ${
+                      metodoPago === "paypal"
+                        ? "bg-[#003087] hover:bg-[#002060] disabled:bg-[#003087]/60"
+                        : "bg-black hover:bg-neutral-800 disabled:bg-neutral-600"
+                    }`}
                   >
                     {isProcessing ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         <span>Procesando pago...</span>
                       </>
-                    ) : (
+                    ) : metodoPago === "tarjeta" ? (
                       <>
                         <Lock className="w-4 h-4" />
                         <span>{t.cart.payBtn} Bs. {subtotal.toLocaleString()}</span>
+                      </>
+                    ) : metodoPago === "qr" ? (
+                      <>
+                        <QrCode className="w-4 h-4" />
+                        <span>Generar Código QR • Bs. {subtotal.toLocaleString()}</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.305-.03.19-.066.389-.107.595-.918 4.605-4.004 6.84-8.083 6.84H8.847l-1.771 7.787zm9.645-13.88c.026-.164.048-.323.067-.478.435-2.793-.728-4.229-3.468-4.229H7.666L5.597 19.347h2.723l1.178-5.183h2.385c3.21 0 5.632-1.722 6.357-5.327l.006-.03z"/>
+                        </svg>
+                        <span>Pagar con PayPal • ${(subtotal / 6.96).toFixed(2)} USD</span>
                       </>
                     )}
                   </button>
@@ -976,6 +1181,90 @@ export default function CarritoPage() {
                 </div>
               )}
             </div>
+
+            {/* MODAL OFICIAL DE PAGO CON CÓDIGO QR SIMPLE */}
+            {showQrModal && (
+              <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+                <div className="bg-white border-2 border-black max-w-sm w-full p-6 text-center shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+                  {/* Botón cerrar */}
+                  <button
+                    type="button"
+                    onClick={() => setShowQrModal(false)}
+                    className="absolute top-3.5 right-3.5 text-neutral-400 hover:text-black transition-colors cursor-pointer"
+                    aria-label="Cerrar modal"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+
+                  {/* Encabezado */}
+                  <div className="inline-block px-2.5 py-0.5 bg-neutral-100 border border-neutral-300 text-[10px] font-mono uppercase tracking-wider text-neutral-700 font-semibold mb-2">
+                    Cobro Interoperable Simple
+                  </div>
+
+                  <h3 className="font-serif text-xl font-normal text-neutral-900 mb-1">
+                    Escanea el Código QR
+                  </h3>
+                  <p className="text-xs text-neutral-600 font-sans leading-relaxed mb-3">
+                    Abre la aplicación de tu banco o billetera móvil en Bolivia y escanea para pagar.
+                  </p>
+
+                  {/* Imagen del QR */}
+                  <div className="relative mx-auto w-52 h-52 bg-white p-2 border border-neutral-300 rounded shadow-xs flex items-center justify-center mb-3">
+                    <img
+                      src="/img/QR.png"
+                      alt="Código QR de Pago Simple"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+
+                  {/* Monto y temporizador */}
+                  <div className="bg-neutral-50 border border-neutral-200 p-3 rounded mb-4">
+                    <div className="flex justify-between items-center text-xs font-mono mb-1">
+                      <span className="text-neutral-500">Monto a abonar:</span>
+                      <span className="font-bold text-neutral-900 text-sm">Bs. {subtotal.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs font-mono">
+                      <span className="text-neutral-500 flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-neutral-600" /> Tiempo restante:
+                      </span>
+                      <span className="font-bold text-neutral-900 font-mono">
+                        00:{qrCountdown.toString().padStart(2, "0")}s
+                      </span>
+                    </div>
+
+                    {/* Barra de progreso de los 30s */}
+                    <div className="w-full bg-neutral-200 h-1.5 rounded-full overflow-hidden mt-2">
+                      <div
+                        className="bg-black h-full transition-all duration-1000 ease-linear"
+                        style={{ width: `${(qrCountdown / 30) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Botones de acción */}
+                  <div className="space-y-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        completarOrden("QR Simple");
+                        setShowQrModal(false);
+                      }}
+                      className="w-full py-2.5 px-4 bg-black hover:bg-neutral-800 text-white font-mono text-xs uppercase tracking-wider font-semibold rounded transition-colors cursor-pointer"
+                    >
+                      Confirmar Pago Realizado
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setShowQrModal(false)}
+                      className="w-full py-2 px-4 bg-transparent hover:bg-neutral-100 text-neutral-600 font-mono text-[11px] uppercase tracking-wider rounded transition-colors cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
         )}
