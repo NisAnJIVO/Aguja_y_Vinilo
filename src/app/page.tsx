@@ -1,13 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Link from "next/link";
+import { gsap } from "gsap";
 import { VinylCard, VinylCardProps } from "@/components/catalog/VinylCard";
 import { useLanguage } from "@/context/LanguageContext";
 import { EditorialCarousel } from "@/components/home/EditorialCarousel";
 import { VinylCharacter } from "@/components/ui/VinylCharacter";
 import { ScrambleText } from "@/components/ui/ScrambleText";
 import { VelocityMarquee } from "@/components/home/VelocityMarquee";
+import { InitialPreloader } from "@/components/home/InitialPreloader";
 
 // First 3x2 collection: Éxitos de la semana
 const FEATURED_RECORDS: VinylCardProps[] = [
@@ -63,9 +65,52 @@ const FEATURED_RECORDS: VinylCardProps[] = [
 
 export default function HomePage() {
   const { t } = useLanguage();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const heroTitleRef = useRef<HTMLHeadingElement>(null);
+  const heroSubtitleRef = useRef<HTMLParagraphElement>(null);
+
+  // Animación de entrada brutalista para el Video y H1 del Hero tras concluir el Preloader
+  const handleHeroEnter = () => {
+    if (videoRef.current) {
+      gsap.fromTo(
+        videoRef.current,
+        { scale: 1.15, filter: "brightness(0.5)" },
+        { scale: 1.0, filter: "brightness(1)", duration: 1.4, ease: "power3.out" }
+      );
+    }
+    if (heroTitleRef.current) {
+      gsap.fromTo(
+        heroTitleRef.current,
+        {
+          y: 45,
+          opacity: 0,
+          clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
+        },
+        {
+          y: 0,
+          opacity: 1,
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+          duration: 1.0,
+          ease: "power4.out",
+          delay: 0.1,
+        }
+      );
+    }
+    if (heroSubtitleRef.current) {
+      gsap.fromTo(
+        heroSubtitleRef.current,
+        { y: 25, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: 0.3 }
+      );
+    }
+  };
 
   return (
     <div className="w-full bg-white text-black font-sans relative">
+      {/* =========================================================================
+          PRELOADER INICIAL BRUTALISTA (1 VEZ POR SESIÓN)
+         ========================================================================= */}
+      <InitialPreloader onHeroEnter={handleHeroEnter} />
       
       {/* =========================================================================
           ESPACIADOR HERO: Ocupa el espacio del video en el flujo del documento
@@ -80,13 +125,14 @@ export default function HomePage() {
          ========================================================================= */}
       <div className="fixed top-[68px] left-0 right-0 z-0 h-[55vh] sm:h-[65vh] md:h-[75vh] bg-black overflow-hidden flex items-center justify-center pointer-events-none select-none">
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
           poster="/img/hero-poster.webp"
           preload="auto"
-          className="w-full h-full object-cover block"
+          className="w-full h-full object-cover block will-change-transform"
         >
           <source src="/img/videoplayback.mp4" type="video/mp4" />
         </video>
@@ -94,10 +140,16 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-black/25" />
 
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 text-center">
-          <h1 className="font-serif text-white text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight leading-tight sm:leading-none drop-shadow-[0_4px_28px_rgba(0,0,0,0.9)]">
+          <h1
+            ref={heroTitleRef}
+            className="font-serif text-white text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-normal tracking-tight leading-tight sm:leading-none drop-shadow-[0_4px_28px_rgba(0,0,0,0.9)] will-change-transform"
+          >
             {t.hero.title}
           </h1>
-          <p className="font-sans text-white/90 text-xs sm:text-base md:text-lg font-light tracking-tight max-w-2xl mx-auto mt-2.5 sm:mt-5 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] leading-relaxed">
+          <p
+            ref={heroSubtitleRef}
+            className="font-sans text-white/90 text-xs sm:text-base md:text-lg font-light tracking-tight max-w-2xl mx-auto mt-2.5 sm:mt-5 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] leading-relaxed will-change-transform"
+          >
             {t.hero.description}
           </p>
         </div>
