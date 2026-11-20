@@ -74,6 +74,7 @@ export const EditorialCarousel: React.FC = () => {
       className="relative w-full h-full overflow-hidden select-none bg-black"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      data-cursor="SCROLL"
     >
       {/* Contenedor de Diapositivas */}
       {SLIDES.map((slide, index) => {

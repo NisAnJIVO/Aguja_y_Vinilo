@@ -57,6 +57,7 @@ export const VinylCard: React.FC<VinylCardProps> = ({
   return (
     <div
       onClick={handleOpenModal}
+      data-cursor="VER"
       className="group flex flex-col select-none cursor-pointer transition-transform duration-200 hover:-translate-y-0.5"
     >
       {/* Vinyl Cover Artwork - Clean, without hover effects */}

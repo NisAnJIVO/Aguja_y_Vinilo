@@ -60,6 +60,7 @@ export const BleepVinylCard: React.FC<BleepVinylCardProps> = ({ item }) => {
   return (
     <div
       onClick={handleOpenModal}
+      data-cursor="VER"
       className="vinyl-grid-card flex flex-col select-none cursor-pointer group transition-all duration-200 group-hover/grid:opacity-45 hover:!opacity-100"
     >
       {/* Portada Cuadrada Limpia 1:1 con Zoom Seco (scale 1.05) y Botón Deslizante */}
@@ -78,6 +79,7 @@ export const BleepVinylCard: React.FC<BleepVinylCardProps> = ({ item }) => {
         <button
           type="button"
           onClick={handleAddToCart}
+          data-cursor="+ CARRITO"
           className="absolute inset-x-0 bottom-0 bg-black text-white font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider py-2.5 px-2 flex items-center justify-center gap-1.5 transition-transform duration-200 ease-out translate-y-full group-hover:translate-y-0 rounded-none border-t border-white/20 hover:bg-neutral-900 active:bg-neutral-800 z-10 cursor-pointer shadow-lg"
         >
           <Plus className="w-3.5 h-3.5 stroke-[2.5]" />

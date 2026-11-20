@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { GlobalProductModal } from "@/components/ui/GlobalProductModal";
 import { FloatingWhatsAppTab } from "@/components/ui/FloatingWhatsAppTab";
 import { CartAddedToast } from "@/components/ui/CartAddedToast";
+import { CustomCursor } from "@/components/ui/CustomCursor";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://aguja-y-vinilo.vercel.app"),
@@ -92,6 +93,7 @@ export default function RootLayout({
             <GlobalProductModal />
             <FloatingWhatsAppTab />
             <CartAddedToast />
+            <CustomCursor />
             {/* Overlay sutil de grano analógico (film grain) */}
             <div
               aria-hidden="true"

@@ -107,6 +107,7 @@ export const DiscosListView: React.FC<DiscosListViewProps> = ({ items }) => {
             key={item.id}
             onClick={() => handleOpenModal(item)}
             onMouseEnter={() => setHoveredItem(item)}
+            data-cursor="VER"
             className="group w-full py-3.5 px-3 sm:px-4 cursor-pointer transition-colors duration-150 select-none hover:bg-black hover:text-white"
           >
             {/* VISTA MÓVIL (CON MINIATURA FIJA A LA IZQUIERDA) */}
