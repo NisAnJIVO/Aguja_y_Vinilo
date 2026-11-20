@@ -9,6 +9,7 @@ import { DiscosListView } from "./DiscosListView";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSearchStore } from "@/store/searchStore";
 import { X, LayoutGrid, List, Search, ArrowUpDown } from "lucide-react";
+import { ScrambleText } from "@/components/ui/ScrambleText";
 
 export const GENRE_CATEGORIES = [
   "TODOS",
@@ -284,7 +285,7 @@ export const BleepDiscosCatalog: React.FC = () => {
                 }`}
               >
                 <LayoutGrid className="w-3 h-3" />
-                <span className="hidden sm:inline">GRILLA</span>
+                <span className="hidden sm:inline"><ScrambleText text="GRILLA" /></span>
               </button>
               <button
                 type="button"
@@ -297,7 +298,7 @@ export const BleepDiscosCatalog: React.FC = () => {
                 }`}
               >
                 <List className="w-3 h-3" />
-                <span className="hidden sm:inline">LISTA</span>
+                <span className="hidden sm:inline"><ScrambleText text="LISTA" /></span>
               </button>
             </div>
 

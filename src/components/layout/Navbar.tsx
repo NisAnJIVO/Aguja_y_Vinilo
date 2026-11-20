@@ -10,6 +10,7 @@ import { useSubscriptionStore } from "@/store/subscriptionStore";
 import { useProductModalStore } from "@/store/productModalStore";
 import { useSearchStore } from "@/store/searchStore";
 import { VinylCharacter } from "@/components/ui/VinylCharacter";
+import { ScrambleText } from "@/components/ui/ScrambleText";
 import { DISCOS_CATALOG } from "@/data/discosData";
 import { MOCK_TURNTABLES } from "@/data/mock-hardware";
 import { MOCK_FURNITURE } from "@/data/mock-furniture";
@@ -295,7 +296,7 @@ export const Navbar: React.FC = () => {
                 }}
                 className="relative py-1 uppercase text-[15px] font-medium text-black group select-none"
               >
-                <span>{item.label}</span>
+                <ScrambleText text={item.label} />
                 <span
                   aria-hidden="true"
                   className={`absolute bottom-0 right-0 h-[2px] bg-black transition-all duration-300 ease-out pointer-events-none ${
@@ -527,7 +528,7 @@ export const Navbar: React.FC = () => {
               style={{ fontFamily: "'IBM Plex Sans', sans-serif", letterSpacing: "-0.5px" }}
               className="text-xs font-bold uppercase tracking-wider hidden sm:inline"
             >
-              {t.nav.cart}
+              <ScrambleText text={t.nav.cart} />
             </span>
           </Link>
 

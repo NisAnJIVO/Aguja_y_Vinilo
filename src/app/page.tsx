@@ -6,6 +6,7 @@ import { VinylCard, VinylCardProps } from "@/components/catalog/VinylCard";
 import { useLanguage } from "@/context/LanguageContext";
 import { EditorialCarousel } from "@/components/home/EditorialCarousel";
 import { VinylCharacter } from "@/components/ui/VinylCharacter";
+import { ScrambleText } from "@/components/ui/ScrambleText";
 
 // First 3x2 collection: Éxitos de la semana
 const FEATURED_RECORDS: VinylCardProps[] = [
@@ -166,7 +167,7 @@ export default function HomePage() {
                     href="/discos"
                     className="inline-block px-5 py-2.5 border border-black text-black hover:bg-black hover:text-white transition-colors text-xs font-mono uppercase tracking-wider"
                   >
-                    {t.homeManifesto.btn}
+                    <ScrambleText text={t.homeManifesto.btn} />
                   </Link>
                 </div>
               </div>

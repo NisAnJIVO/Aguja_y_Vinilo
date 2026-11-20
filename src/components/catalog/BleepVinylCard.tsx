@@ -8,6 +8,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { useCartStore } from "@/store/cartStore";
 import { useToastStore } from "@/store/toastStore";
 import { Plus } from "lucide-react";
+import { ScrambleText } from "@/components/ui/ScrambleText";
 
 interface BleepVinylCardProps {
   item: DiscoItem;
@@ -83,7 +84,7 @@ export const BleepVinylCard: React.FC<BleepVinylCardProps> = ({ item }) => {
           className="absolute inset-x-0 bottom-0 bg-black text-white font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider py-2.5 px-2 flex items-center justify-center gap-1.5 transition-transform duration-200 ease-out translate-y-full group-hover:translate-y-0 rounded-none border-t border-white/20 hover:bg-neutral-900 active:bg-neutral-800 z-10 cursor-pointer shadow-lg"
         >
           <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-          <span>{isEn ? "Add to Cart" : "Agregar al Carrito"}</span>
+          <ScrambleText text={isEn ? "Add to Cart" : "Agregar al Carrito"} />
         </button>
       </div>
 
