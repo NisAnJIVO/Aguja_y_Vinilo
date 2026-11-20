@@ -11,6 +11,7 @@ import { ScrambleText } from "@/components/ui/ScrambleText";
 import { VelocityMarquee } from "@/components/home/VelocityMarquee";
 import { InitialPreloader } from "@/components/home/InitialPreloader";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { StackedCategories } from "@/components/home/StackedCategories";
 
 // First 3x2 collection: Éxitos de la semana
 const FEATURED_RECORDS: VinylCardProps[] = [
@@ -186,6 +187,11 @@ export default function HomePage() {
             SECCIÓN SEPARADORA: MARQUEE INFINITO CON GSAP SCROLLTRIGGER (VELOCIDAD & DIRECCIÓN)
            ========================================================================= */}
         <VelocityMarquee />
+
+        {/* =========================================================================
+            CATEGORÍAS DESTACADAS: TARJETAS APILADAS ESTILO BASEMENT STUDIO (GSAP SCROLLTRIGGER)
+           ========================================================================= */}
+        <StackedCategories />
       </div>
 
       {/* =========================================================================
