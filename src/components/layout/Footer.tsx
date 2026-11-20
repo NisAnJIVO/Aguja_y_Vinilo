@@ -11,7 +11,7 @@ export const Footer: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
 
   return (
-    <footer className="relative lg:fixed lg:bottom-0 lg:left-0 lg:right-0 lg:z-0 lg:h-[500px] w-full bg-black text-white overflow-hidden flex flex-col justify-between">
+    <footer className="relative z-20 w-full min-h-[500px] bg-black text-white overflow-hidden flex flex-col justify-between">
       {/* Fondo con suspiria1.png anclado arriba (object-top), cortando la parte inferior desocupada */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none">
         <Image

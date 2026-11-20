@@ -88,7 +88,7 @@ export default function RootLayout({
         <LanguageProvider>
           <SmoothScrollProvider>
             <Navbar />
-            <main className="relative z-10 flex-1 w-full bg-[#0E0E0E] lg:mb-[500px] shadow-[0_30px_70px_rgba(0,0,0,0.55)]">
+            <main className="relative z-10 flex-1 w-full bg-[#0E0E0E]">
               {children}
             </main>
             <Footer />

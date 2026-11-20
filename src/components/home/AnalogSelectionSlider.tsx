@@ -52,7 +52,7 @@ export const AnalogSelectionSlider: React.FC = () => {
 
     // Scroll horizontal real en Desktop (ancho >= 768px) con pin y scrub
     mm.add("(min-width: 768px)", () => {
-      const getScrollAmount = () => -(track.scrollWidth - window.innerWidth + 80);
+      const getScrollAmount = () => -(track.scrollWidth - window.innerWidth + 120);
 
       const tween = gsap.to(track, {
         x: getScrollAmount,
@@ -60,10 +60,12 @@ export const AnalogSelectionSlider: React.FC = () => {
         scrollTrigger: {
           trigger: section,
           pin: true,
+          pinSpacing: true,
           scrub: 1,
           start: "top 68px",
-          end: () => "+=" + (track.scrollWidth - window.innerWidth + 80),
+          end: () => "+=" + (track.scrollWidth - window.innerWidth + 120),
           invalidateOnRefresh: true,
+          anticipatePin: 1,
           onUpdate: (self) => {
             setProgress(self.progress);
           },
@@ -117,7 +119,7 @@ export const AnalogSelectionSlider: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-white text-[#111111] py-14 sm:py-20 overflow-hidden border-b border-black/10 select-none"
+      className="w-full bg-white text-[#111111] py-14 sm:py-24 overflow-hidden border-t border-b border-black/10 select-none"
     >
       {/* Encabezado Editorial Limpio */}
       <div className="w-full max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 mb-8 sm:mb-10">

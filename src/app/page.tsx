@@ -210,11 +210,6 @@ export default function HomePage() {
           Sube deslizándose DIRECTAMENTE por encima del banner anterior, tapándolo.
          ========================================================================= */}
       <div className="relative z-20 bg-white shadow-[0_-20px_45px_rgba(0,0,0,0.25)]">
-        {/* =========================================================================
-            SELECCIÓN ANALÓGICA: CARRUSEL HORIZONTAL INTERACTIVO (ARISTIDE BENOIST)
-           ========================================================================= */}
-        <AnalogSelectionSlider />
-
         <section className="w-full bg-white py-12 sm:py-24 px-4 sm:px-12 lg:px-16">
           <div className="w-full max-w-[1520px] mx-auto">
             
@@ -382,6 +377,11 @@ export default function HomePage() {
 
           </div>
         </section>
+
+        {/* =========================================================================
+            SELECCIÓN ANALÓGICA: CARRUSEL HORIZONTAL INTERACTIVO AL FINAL DE LA PÁGINA
+           ========================================================================= */}
+        <AnalogSelectionSlider />
       </div>
 
     </div>
