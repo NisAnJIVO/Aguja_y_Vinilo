@@ -12,6 +12,7 @@ import { useSearchStore } from "@/store/searchStore";
 import { VinylCharacter } from "@/components/ui/VinylCharacter";
 import { ScrambleText } from "@/components/ui/ScrambleText";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { HoverRollText } from "@/components/ui/HoverRollText";
 import { DISCOS_CATALOG } from "@/data/discosData";
 import { MOCK_TURNTABLES } from "@/data/mock-hardware";
 import { MOCK_FURNITURE } from "@/data/mock-furniture";
@@ -579,11 +580,14 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/estado-pedido"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="font-serif text-xl font-normal py-1 text-neutral-700 hover:text-black border-b border-neutral-100 flex items-center justify-between"
+                className="group font-serif text-xl font-normal py-1 text-neutral-700 hover:text-black border-b border-neutral-100 flex items-center justify-between"
               >
                 <span className="flex items-center gap-2">
                   <PackageCheck className="w-4 h-4 text-neutral-500" />
-                  {language === "en" ? "Track Order" : "Rastrear Pedido"}
+                  <HoverRollText
+                    text={language === "en" ? "Track Order" : "Rastrear Pedido"}
+                    rollClassName="italic text-black font-medium"
+                  />
                 </span>
                 <span className="font-mono text-xs text-neutral-400">&rarr;</span>
               </Link>
@@ -591,9 +595,12 @@ export const Navbar: React.FC = () => {
               <Link
                 href="/nosotros"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="font-serif text-xl font-normal py-1 text-neutral-700 hover:text-black border-b border-neutral-100 flex items-center justify-between"
+                className="group font-serif text-xl font-normal py-1 text-neutral-700 hover:text-black border-b border-neutral-100 flex items-center justify-between"
               >
-                <span>{language === "en" ? "About Us" : "Sobre Nosotros"}</span>
+                <HoverRollText
+                  text={language === "en" ? "About Us" : "Sobre Nosotros"}
+                  rollClassName="italic text-black font-medium"
+                />
                 <span className="font-mono text-xs text-neutral-400">&rarr;</span>
               </Link>
             </nav>

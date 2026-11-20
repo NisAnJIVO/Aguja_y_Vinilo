@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { VinylCharacter } from "@/components/ui/VinylCharacter";
+import { HoverRollText } from "@/components/ui/HoverRollText";
 
 export const Footer: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -100,66 +101,66 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-5 grid grid-cols-2 gap-8 sm:gap-12 text-sm font-mono uppercase tracking-wider text-gray-200">
             <ul className="space-y-3.5">
               <li>
-                <Link href="/suscripcion" className="hover:text-white transition-colors">
-                  {t.nav.subscription}
+                <Link href="/suscripcion" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.nav.subscription} />
                 </Link>
               </li>
               <li>
-                <Link href="/nosotros" className="hover:text-white transition-colors">
-                  {t.footer.about}
+                <Link href="/nosotros" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.about} />
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:text-white transition-colors">
-                  {t.footer.faq}
+                <Link href="/faq" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.faq} />
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="hover:text-white transition-colors">
-                  {t.footer.blog}
+                <Link href="/blog" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.blog} />
                 </Link>
               </li>
               <li>
-                <Link href="/envios" className="hover:text-white transition-colors">
-                  {t.footer.shippingPolicy}
+                <Link href="/envios" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.shippingPolicy} />
                 </Link>
               </li>
               <li>
-                <Link href="/devoluciones" className="hover:text-white transition-colors">
-                  {t.footer.returnPolicy}
+                <Link href="/devoluciones" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.returnPolicy} />
                 </Link>
               </li>
             </ul>
 
             <ul className="space-y-3.5">
               <li>
-                <Link href="/privacidad" className="hover:text-white transition-colors">
-                  {t.footer.privacyPolicy}
+                <Link href="/privacidad" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.privacyPolicy} />
                 </Link>
               </li>
               <li>
-                <Link href="/terminos" className="hover:text-white transition-colors">
-                  {t.footer.terms}
+                <Link href="/terminos" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.terms} />
                 </Link>
               </li>
               <li>
-                <Link href="/contacto" className="hover:text-white transition-colors">
-                  {t.footer.contact}
+                <Link href="/contacto" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.contact} />
                 </Link>
               </li>
               <li>
-                <Link href="/empresa" className="hover:text-white transition-colors">
-                  {t.footer.companyInfo}
+                <Link href="/empresa" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.companyInfo} />
                 </Link>
               </li>
               <li>
-                <Link href="/mayoristas" className="hover:text-white transition-colors">
-                  {t.footer.wholesale}
+                <Link href="/mayoristas" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.wholesale} />
                 </Link>
               </li>
               <li>
-                <Link href="/estado-pedido" className="hover:text-white transition-colors">
-                  {t.footer.orderStatus}
+                <Link href="/estado-pedido" className="group text-neutral-300 hover:text-white transition-colors block">
+                  <HoverRollText text={t.footer.orderStatus} />
                 </Link>
               </li>
             </ul>
